@@ -1,0 +1,14 @@
+moviepy==1.0.3  ##除特殊标注外，一律为可以下载的最新版本##
+wxPython==4.2.2
+mediapipe==0.10.14
+Pyjwt==2.9.0
+IPython==8.18.1
+einops==0.8.0
+mmdet==3.3.0
+pandas==2.2.3
+onnxruntime-gpu==1.17.1 #only 1.17.1
+lightning==2.4.0
+fairscale==0.4.13
+omegaconf==2.3.0
+timm==1.0.11
+basicsr==1.4.2
