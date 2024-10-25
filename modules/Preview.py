@@ -662,6 +662,10 @@ class units():
                 default='standard_float',
                 choices=['standard_float', 'separable_float', 'standard_half', 'separable_half'],
                 help='The model to use.')
+        parser.add_argument('--config', default="./config/sitting.yaml", type=str, required=False, help='Path to the config file.')
+        parser.add_argument('--pipeline', type=str, default="PIFDFSFRF",required=False, help='Pipeline.')
+        parser.add_argument('--is_trans', type=str, default="None", required=False, help='Generate a transparent no background image package.')
+        parser.add_argument('--package_name', type=str, default=None, required=False, help='Output package name.')
         args = parser.parse_args()
         device = torch.device('cuda')
         try:

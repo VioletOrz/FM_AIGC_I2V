@@ -92,17 +92,18 @@ def dehaze_V2(originPath,savePath):
             result[:, :, i] = (img[:, :, i] - atom) / trans_guided + atom
         oneSave = os.path.join(savePath,image_name)
         cv2.imwrite(oneSave, result*255)"""
+    
     for image_name in os.listdir(originPath):
         image_path = os.path.join(originPath, image_name)
         print(image_path)
         im = cv2.imread(image_path, cv2.IMREAD_UNCHANGED)  # 读取带有透明通道的图像
-        cv2.imwrite(r'C:\Users\Violet\Desktop\facial\change_chaofen\1.png', im) 
+        #cv2.imwrite(r'C:/Users/Violet/Desktop/facial/change_chaofen/1.png', im) 
         img = im.astype('float64') / 255  # 只处理RGB通道
-        cv2.imwrite(r'C:\Users\Violet\Desktop\facial\change_chaofen\2.png', im[:, :, :3]) 
+        #cv2.imwrite(r'C:/Users/Violet/Desktop/facial/change_chaofen/2.png', im[:, :, :3]) 
         alpha_channel = im[:, :, 3]  # 获取alpha通道
         alpha_channel[alpha_channel != 0] = 255
         #a = np.dstack((img * 255, alpha_channel)).astype(np.uint8)
-        #cv2.imwrite(r'C:\Users\Violet\Desktop\facial\change_chaofen\3.png', a) 
+        #cv2.imwrite(r'C:/Users/Violet/Desktop/facial/change_chaofen/3.png', a) 
 
         img_gray = cv2.cvtColor(im[:, :, :3], cv2.COLOR_BGR2GRAY).astype('float64') / 255
         atom = get_atmo(img)
@@ -117,7 +118,8 @@ def dehaze_V2(originPath,savePath):
         result_with_alpha = np.dstack((result[:,:,:3] * 255, alpha_channel)).astype(np.uint8)
         
         oneSave = os.path.join(savePath, image_name)
-        cv2.imwrite(oneSave, result*255)  # 保存结果，保留透明度
+        cv2.imwrite(oneSave, result*255)  # 保存结果，保留透明度 
+        
         
     # cv2.imshow("source",img)
     # cv2.imshow("result", result)

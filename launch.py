@@ -8,7 +8,10 @@ def Args():
     parser = argparse.ArgumentParser(description="A script to process prompts and config files")
 
     # 添加参数
-    parser.add_argument('--config', type=str, required=False, help='Path to the config file')
+    parser.add_argument('--config', default="./config/sitting.yaml", type=str, required=False, help='Path to the config file.')
+    parser.add_argument('--pipeline', type=str, default="PIFDFSFRF",required=False, help='Pipeline.')
+    parser.add_argument('--is_trans', type=str, default="None", required=False, help='Generate a transparent no background image package.')
+    parser.add_argument('--package_name', type=str, default=None, required=False, help='Output package name.')
 
     # 解析命令行参数
     args = parser.parse_args()
@@ -16,13 +19,19 @@ def Args():
     # 使用解析到的参数
 
     config_file = args.config
+    pipeline_string = args.pipeline
+    mode_is_trans = args.is_trans
+    package_name = args.package_name
 
-    if config_file == None:
-        config_file = './config/sitting.yaml'
+    return {
+        "config": config_file,
+        "pipeline": pipeline_string,
+        "is_trans": mode_is_trans,
+        'package_name': package_name,
+    }
 
-    return config_file
-
-def argument(config_path: str):
+def argument(arg):
+    config_path = arg['config']
     with open(config_path, 'r') as file:
         config = yaml.safe_load(file)
         
@@ -55,10 +64,17 @@ def argument(config_path: str):
         #force_extension = config['mode']['force_extension']
 
         face_landmarker_path = config['model_path']['face_landmarker_path']
-        
+    
+    if arg['is_trans'] != "None":
+        if arg['is_trans'] == "True":
+            is_trans = True
+        elif arg['is_trans'] == "False":
+            is_trans = False
+    if arg['package_name'] != None:
+        img_pack_file_name = arg['package_name']
 
-        return {        
-            'Path': {
+    return {        
+        'Path': {
                 'original_image_path': original_image_path,
                 'emotion_video': emotion_video,
                 'background_path': background_path,
@@ -80,15 +96,15 @@ def argument(config_path: str):
                 'img_pack_file_name': img_pack_file_name,
                 
             },
-            'mode':{
+        'mode':{
                 'is_trans': is_trans,
                 'alternate_background': alternate_background,
             },
-            'model_path': {
+        'model_path': {
                 'face_landmarker_path': face_landmarker_path,
                 #'force_extension': force_extension,
             }
-        }
+    }
 
 def save_image(image, save_path: str):
 
@@ -241,11 +257,203 @@ def Difference_image(config,input_file, output_file):
 
 
 def main():
-    config_file = Args()
-    config = argument(config_file)
-    Preview(config)
+    arg = Args()
+    config = argument(arg)
+    Generate_image_package_pipeline_from_String(config, arg['pipeline'])
+    #Preview(config)
     #Generate_image_package_pipeline_per_step(config)
-    Generate_image_package_pipeline(config)
+    #Generate_image_package_pipeline(config)
+
+def Generate_image_package_pipeline_from_String(config, pipeline: str):
+    #PIDSRF
+    #P:Preview
+    #I:Image package generate
+    #D:Dehaze
+    #S:SuperResHD
+    #R:Resize
+    #F:Final-->Generate Difference Image Package
+    img_pack_save_path = config['Path']['img_pack_save_path']
+    img_pack_file_name = config['Path']['img_pack_file_name']
+
+    #######################
+    is_trans = config['mode']['is_trans']
+    #######################
+    if is_trans: img_pack_file_name = img_pack_file_name + '_trans'
+
+    base_pack_name = config['Path']['base_pack_name']
+    base_image_path = img_pack_save_path + img_pack_file_name + '/' + base_pack_name
+    dehazed_pack_name = config['Path']['dehazed_pack_name']
+    dehazed_image_path = img_pack_save_path + img_pack_file_name + '/' + dehazed_pack_name
+    SuperResHD_pack_name = config['Path']['SuperResHD_pack_name']
+    SuperResHD_image_path = img_pack_save_path + img_pack_file_name + '/' + SuperResHD_pack_name
+    resized_pack_name = config['Path']['resized_pack_name']
+    resized_image_path = img_pack_save_path + img_pack_file_name + '/' + resized_pack_name
+
+    sys_output = ''
+    cnt  = 0
+    for process_step in pipeline:
+        if process_step not in "PIDSRFidsr":
+            print(f"The pipeline char is must in P, I/i, D/d, S/s, R/r, F, the input pipeline char is: {process_step}.")
+            return
+        if process_step == 'P':
+            if cnt != 0 :
+                print(f"The pipeline is noncompliant, P must on top.")
+                return
+            sys_output = sys_output + 'Preview -->'
+        elif process_step == 'I':
+            if cnt != 0 :
+                if cnt > 1:
+                    print(f"The pipeline is noncompliant, I must on top or afer P")
+                    return
+                if cnt == 1 and pipeline[cnt - 1] != 'P':
+                    print(f"The pipeline is noncompliant, I must on top or afer P")
+                    return
+            sys_output = sys_output + 'Generate Image package -->'
+        elif process_step == 'D':
+            if cnt != 0 :
+                if cnt - 1 < 0:
+                    print(f"The pipeline is noncompliant, D must after I/i or F.")
+                    return
+                last = pipeline[cnt - 1]
+                if last not in "IiF":
+                    print(f"The pipeline is noncompliant, D must after I/i or F.")
+                    return
+            sys_output = sys_output + 'Dehazing process -->'
+        elif process_step == 'S':
+            if cnt != 0 :
+                if cnt - 1 < 0:
+                    print(f"The pipeline is noncompliant, S must after I/i, D/d, or F.")
+                    return
+                last = pipeline[cnt - 1]
+                if last not in "IiDdF":
+                    print(f"The pipeline is noncompliant, S must after I/i, D/d, or F.")
+                    return
+            sys_output = sys_output + 'SuperRes HD process -->'
+        elif process_step == 'R':
+            if cnt != 0 :
+                if cnt - 1 < 0:
+                    print(f"The pipeline is noncompliant, R must after S/s or F.")
+                    return
+                last = pipeline[cnt - 1]
+                if last not in "SsF":
+                    print(f"The pipeline is noncompliant, R must after S/s or F.")
+                    return
+            sys_output = sys_output + 'Resize H and W to half Res -->'
+        elif process_step == 'F':
+            if cnt != 0 :
+                if cnt - 1 < 0:
+                    print(f"The pipeline is noncompliant, F must after I/i, D/d, S/s, or R/r.")
+                    return
+                last = pipeline[cnt - 1]
+                if last not in "IDSR":
+                    print(f"The pipeline is noncompliant, F must after I/i, D/d, S/s, or R/r.")
+                    return
+            sys_output = sys_output + f'Generate {last} Difference Image package.  ||  '
+        elif process_step in "idsr":
+            if cnt != 0 :
+                print(f"The pipeline is noncompliant, {process_step} must on top.")
+                return
+            sys_output = sys_output + f'From last Interrupt Step {process_step} Continue --> '
+        cnt = cnt + 1
+
+    print("###########################################")
+    print(sys_output)
+    print("###########################################")
+    time.sleep(5)
+
+
+    last_output_path = None
+    cnt = 0
+    for process_step in pipeline:
+        if process_step == 'P':
+            Preview(config)
+        elif process_step == 'I':
+            last_output_path = Img_pack_6T(config = config, output_flie = base_image_path)
+        elif process_step == 'D':
+            if last_output_path == None:
+                last_output_path = continue_path(config, pipeline[cnt-1])
+            last_output_path = Dehazing(config = config, input_file = last_output_path, output_file = dehazed_image_path)
+        elif process_step == 'S':
+            if last_output_path == None:
+                last_output_path = continue_path(config, pipeline[cnt-1])
+            last_output_path = SupResHD(config = config, input_file = last_output_path, output_file = SuperResHD_image_path)
+        elif process_step == 'R':
+            if last_output_path == None:
+                last_output_path = continue_path(config, pipeline[cnt-1])
+            last_output_path = Resize_batch(config = config, input_file = last_output_path, output_file = resized_image_path)
+        elif process_step == 'F':
+            last_process_step = pipeline[cnt-1]
+            if last_output_path == None:
+                last_output_path = continue_path(config, pipeline[cnt-1])
+                last_process_step = pipeline[cnt-1].upper()
+            Difference_image(config = config, input_file = last_output_path, output_file = img_pack_save_path + img_pack_file_name + '/Difference_' + last_process_step)
+        cnt = cnt + 1
+
+def continue_path(config, process_step):
+    img_pack_save_path = config['Path']['img_pack_save_path']
+    img_pack_file_name = config['Path']['img_pack_file_name']
+
+    #######################
+    is_trans = config['mode']['is_trans']
+    #######################
+    if is_trans: img_pack_file_name = img_pack_file_name + '_trans'
+
+    base_pack_name = config['Path']['base_pack_name']
+    base_image_path = img_pack_save_path + img_pack_file_name + '/' + base_pack_name
+    dehazed_pack_name = config['Path']['dehazed_pack_name']
+    dehazed_image_path = img_pack_save_path + img_pack_file_name + '/' + dehazed_pack_name
+    SuperResHD_pack_name = config['Path']['SuperResHD_pack_name']
+    SuperResHD_image_path = img_pack_save_path + img_pack_file_name + '/' + SuperResHD_pack_name
+    resized_pack_name = config['Path']['resized_pack_name']
+    resized_image_path = img_pack_save_path + img_pack_file_name + '/' + resized_pack_name
+
+    if process_step == 'i':
+        return base_image_path
+    elif process_step == 'd':
+        return dehazed_image_path
+    elif process_step == 's':
+        return SuperResHD_image_path
+    elif process_step == 'r':
+        return resized_image_path
+
+def Generate_image_package_pipeline_per_step(config):
+
+
+    #If the code breaks at a certain step, 
+    # you can use this function to pick up where you left off, 
+    # remember to adjust the input output and the functions you need to run!
+
+    img_pack_save_path = config['Path']['img_pack_save_path']
+    img_pack_file_name = config['Path']['img_pack_file_name']
+
+    #######################
+    is_trans = config['mode']['is_trans']
+    #######################
+    if is_trans: img_pack_file_name = img_pack_file_name + '_trans'
+
+    base_pack_name = config['Path']['base_pack_name']
+    base_image_path = img_pack_save_path + img_pack_file_name + '/' + base_pack_name
+    dehazed_pack_name = config['Path']['dehazed_pack_name']
+    dehazed_image_path = img_pack_save_path + img_pack_file_name + '/' + dehazed_pack_name
+    SuperResHD_pack_name = config['Path']['SuperResHD_pack_name']
+    SuperResHD_image_path = img_pack_save_path + img_pack_file_name + '/' + SuperResHD_pack_name
+    resized_pack_name = config['Path']['resized_pack_name']
+    resized_image_path = img_pack_save_path + img_pack_file_name + '/' + resized_pack_name
+    DiffHD_pack_name = config['Path']['DiffHD_pack_name']
+    DiffHD_image_path = img_pack_save_path + img_pack_file_name + '/' + DiffHD_pack_name
+    DiffLD_pack_name = config['Path']['DiffLD_pack_name']
+    DiffLD_image_path = img_pack_save_path + img_pack_file_name + '/' + DiffLD_pack_name
+
+    #Img_pack_6T(config, base_image_path)
+    #SupResHD(config, base_image_path, SuperResHD_image_path)
+    #Dehazing(config, base_image_path, dehazed_image_path)
+    #SupResHD(config, dehazed_image_path, SuperResHD_image_path)
+    #Resize_batch(config, SuperResHD_image_path, resized_image_path)
+    #Difference_image(config, base_image_path, DiffHD_image_path)
+    #Difference_image(config, dehazed_image_path, DiffHD_image_path)
+    #Difference_image(config, SuperResHD_image_path, DiffHD_image_path)
+    #Difference_image(config, resized_image_path, DiffLD_image_path)
+
 
 def Generate_image_package_pipeline(config):
 
@@ -280,44 +488,6 @@ def Generate_image_package_pipeline(config):
     output_resize = Resize_batch(config, output_HD, resized_image_path)
     Difference_image(config, output_HD, DiffHD_image_path)
     Difference_image(config, output_resize, DiffLD_image_path)
-
-def Generate_image_package_pipeline_per_step(config):
-
-
-    #If the code breaks at a certain step, 
-    # you can use this function to pick up where you left off, 
-    # remember to adjust the input output and the functions you need to run!
-
-    img_pack_save_path = config['Path']['img_pack_save_path']
-    img_pack_file_name = config['Path']['img_pack_file_name']
-
-    #######################
-    is_trans = config['mode']['is_trans']
-    #######################
-    if is_trans: img_pack_file_name = img_pack_file_name + '_trans'
-
-    base_pack_name = config['Path']['base_pack_name']
-    base_image_path = img_pack_save_path + img_pack_file_name + '/' + base_pack_name
-    dehazed_pack_name = config['Path']['dehazed_pack_name']
-    dehazed_image_path = img_pack_save_path + img_pack_file_name + '/' + dehazed_pack_name
-    SuperResHD_pack_name = config['Path']['SuperResHD_pack_name']
-    SuperResHD_image_path = img_pack_save_path + img_pack_file_name + '/' + SuperResHD_pack_name
-    resized_pack_name = config['Path']['resized_pack_name']
-    resized_image_path = img_pack_save_path + img_pack_file_name + '/' + resized_pack_name
-    DiffHD_pack_name = config['Path']['DiffHD_pack_name']
-    DiffHD_image_path = img_pack_save_path + img_pack_file_name + '/' + DiffHD_pack_name
-    DiffLD_pack_name = config['Path']['DiffLD_pack_name']
-    DiffLD_image_path = img_pack_save_path + img_pack_file_name + '/' + DiffLD_pack_name
-
-    Img_pack_6T(config, base_image_path)
-    #SupResHD(config, base_image_path, SuperResHD_image_path)
-    Dehazing(config, base_image_path, dehazed_image_path)
-    #SupResHD(config, dehazed_image_path, SuperResHD_image_path)
-    #Resize_batch(config, SuperResHD_image_path, resized_image_path)
-    Difference_image(config, dehazed_image_path, DiffHD_image_path)
-    #Difference_image(config, SuperResHD_image_path, DiffHD_image_path)
-    #Difference_image(config, resized_image_path, DiffLD_image_path)
-
 
 
 if __name__ == "__main__":

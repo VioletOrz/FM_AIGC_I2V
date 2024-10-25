@@ -5,8 +5,8 @@ from tqdm import tqdm
 
 def generate_difference_mask(image_path1, image_path2, img_num, mode, strength, output_file):
     # Read images
-    image1 = cv2.imread(image_path1)
-    image2 = cv2.imread(image_path2)
+    image1 = cv2.imread(image_path1, cv2.IMREAD_UNCHANGED)
+    image2 = cv2.imread(image_path2, cv2.IMREAD_UNCHANGED)
 
     # Convert images to grayscale
     gray1 = cv2.cvtColor(image1, cv2.COLOR_BGR2GRAY)
@@ -26,10 +26,10 @@ def generate_difference_mask(image_path1, image_path2, img_num, mode, strength, 
     mask = np.zeros((image1.shape[0], image1.shape[1], 4), dtype=np.uint8)
 
     # Set RGB values where there is difference
-    mask[dilated == 255, :3] = image2[dilated == 255, :]
+    mask[dilated == 255, :4] = image2[dilated == 255, :]
 
     # Set alpha channel to 255 (fully opaque) where there is difference
-    mask[dilated == 255, 3] = 255
+    #mask[dilated == 255, 3] = 255
 
     # Save the mask as PNG with alpha channel
     mask_path = output_file+f'/{mode}_{strength}/img_{img_num + 1:03}.webp'

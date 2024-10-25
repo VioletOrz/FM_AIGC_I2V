@@ -21,7 +21,7 @@ Path:
 
   
   img_pack_save_path: 'C:/Users/Violet/Desktop/facial/' #This is output path
-  img_pack_file_name: 'OOM' #This is output flie,usually,this is the id of the character
+  img_pack_file_name: '001' #This is output flie,usually,this is the id of the character
   base_pack_name: 'base_image_package' #
   dehazed_pack_name: "dehazed_image_package" #Dehazed images output file
   SuperResHD_pack_name: 'SuperResHD_image_package' #Super resolution HD inpaint algorithm
@@ -31,7 +31,7 @@ Path:
 
 
 mode:
-  is_trans: False #This parameter controls whether the generated image has a transparent background (only characters, no background)
+  is_trans: True #This parameter controls whether the generated image has a transparent background (only characters, no background)
   alternate_background: False #Opening will use the image uploaded by the user instead of the original background,
   #force_extension: 'webp' # None 'jpg' 'png' 'webp' It must be a string or None #This parameter controls the format in which the image is saved. Setting it to None automatically selects the format
 

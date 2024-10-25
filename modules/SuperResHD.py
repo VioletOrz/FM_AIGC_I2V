@@ -61,7 +61,11 @@ def main(dir_path,output_path,):
         help='Image extension. Options: auto | jpg | png, auto means using the same extension as inputs')
     parser.add_argument(
         '-g', '--gpu-id', type=int, default=None, help='gpu device to use (default=None) can be 0,1,2 for multi-gpu')
-
+    
+    parser.add_argument('--config', default="./config/sitting.yaml", type=str, required=False, help='Path to the config file.')
+    parser.add_argument('--pipeline', type=str, default="PIFDFSFRF",required=False, help='Pipeline.')
+    parser.add_argument('--is_trans', type=str, default="None", required=False, help='Generate a transparent no background image package.')
+    parser.add_argument('--package_name', type=str, default=None, required=False, help='Output package name.')
     args = parser.parse_args()
 
     # determine models according to model names

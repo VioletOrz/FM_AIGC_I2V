@@ -145,6 +145,10 @@ def change_position(img_path,cropped_dir=''):
   parser.add_argument('--agnostic-nms', action='store_true', help='class-agnostic NMS')
   parser.add_argument('--augment', action='store_true', help='augmented inference')
   parser.add_argument('--update', action='store_true', help='update all models')
+  parser.add_argument('--config', default="./config/sitting.yaml", type=str, required=False, help='Path to the config file.')
+  parser.add_argument('--pipeline', type=str, default="PIFDFSFRF",required=False, help='Pipeline.')
+  parser.add_argument('--is_trans', type=str, default="None", required=False, help='Generate a transparent no background image package.')
+  parser.add_argument('--package_name', type=str, default=None, required=False, help='Output package name.')
   opt = parser.parse_args()
   print(opt)
 
