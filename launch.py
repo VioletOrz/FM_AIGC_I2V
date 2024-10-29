@@ -427,7 +427,7 @@ def Generate_image_package_pipeline_from_String(config, pipeline: str):
                     print(f"The pipeline is noncompliant, F must after I/i, D/d, S/s, or R/r.")
                     return
                 last = pipeline[cnt - 1]
-                if last not in "IDSR":
+                if last not in "IDSRidsr":
                     print(f"The pipeline is noncompliant, F must after I/i, D/d, S/s, or R/r.")
                     return
             sys_output = sys_output + f'Generate {last} Difference Image package.  ||  '
