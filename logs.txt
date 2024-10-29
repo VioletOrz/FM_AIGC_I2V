@@ -41,3 +41,7 @@ v2.2.1
 在F的可识别前置字符中加入了i d s r
 
 
+v2.2.2
+修复了is_trans模式和alternate_background模式下错误读取缓存background的bug
+删除了部分冗余代码
+修复了进程池中概率性发生创建已存在目录报错的bug

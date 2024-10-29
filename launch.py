@@ -197,13 +197,17 @@ def Preview(config):
     
     units_ins.step1(original_image_path,mask_output_dir,cropped_dir)
     print("----------------------------step1 finished!!-------------------------------------")
-    
-    units_ins.step2(original_image_path,mask_output_dir+'mask_0.png',background_path,is_trans,alternate_background)
+
+    if is_trans == False:
+        units_ins.step2(original_image_path,mask_output_dir+'mask_0.png',background_path,is_trans,alternate_background)
     print("----------------------------step2 finished!!-------------------------------------")
 
-    if alternate_background:
+    if is_trans == False and alternate_background:
         from modules.Resize_image import resize_image_ref
-        resize_image_ref(alternate_background_path,background_path,background_path)
+        resize_image_ref(alternate_background_path,original_image_path,background_path)
+
+    if is_trans:
+        background_path = original_image_path
 
     if emotion_from_tensor:
         units_ins.step3_pose_from_tensor(input_image_path,emotion_pose_load_path,background_path,background_output_video_path,face_landmarker_path, is_trans)
@@ -246,12 +250,16 @@ def Img_pack_6T(config, output_flie):
     units_ins2.step1(original_image_path,mask_output_dir,cropped_dir)
     print("----------------------------step1 finished!!-------------------------------------")
 
-    units_ins2.step2(original_image_path,mask_output_dir+'mask_0.png',background_path,is_trans,alternate_background)
+    if is_trans == False:
+        units_ins2.step2(original_image_path,mask_output_dir+'mask_0.png',background_path,is_trans,alternate_background)
     print("----------------------------step2 finished!!-------------------------------------")
 
-    if alternate_background:
+    if is_trans == False and alternate_background:
         from modules.Resize_image import resize_image_ref
-        resize_image_ref(alternate_background_path,background_path,background_path)
+        resize_image_ref(alternate_background_path,original_image_path,background_path)
+
+    if is_trans:
+        background_path = original_image_path
 
     if emotion_from_tensor:
         units_ins2.step3_pose_from_tensor(input_image_path,emotion_pose_load_path,background_path,output_flie,face_landmarker_path, is_trans)

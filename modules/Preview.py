@@ -680,109 +680,11 @@ class units():
             if diffusion_process.poll() is None:
                 diffusion_process.kill()"""
             #print("sd process killed")
-        else:
-            image = Image.open(background_path)
-            if(img_width*img_height>1200*1200):
-                image=image.resize((img_width,img_height),resample=Image.BICUBIC)
-            image.save(background_path)  
-
-    def step22(self,original_image_path,mask_output_path,background_path, is_trans = False, alternate_background = False):
-        #将遮罩图片和原始图片输入sd，重绘得到背景图片
-        import requests
-        import subprocess
-        import io
-        import base64
-        from PIL import Image
-        #diffusion_process=subprocess.Popen(['D:/stable-diffusion-webui-master/webui.bat','--api'])
-        #time.sleep(5)
-        img_width=0
-        img_height=0
-        #把图片和mask转换成base64编码，如果图片太大，进行降采样
-        with open(original_image_path, "rb") as f:
-            original_image = f.read()
-            img_width=Image.open(io.BytesIO(original_image)).size[0]
-            img_height=Image.open(io.BytesIO(original_image)).size[1]
-            new_width=img_width
-            new_height=img_height
-            while(new_width*new_height>1200*1200):
-                original_image_PIL=Image.open(io.BytesIO(original_image))
-                new_width=new_width//2
-                new_height=new_height//2
-                original_image_PIL=original_image_PIL.resize((new_width,new_height),resample=Image.BICUBIC)
-                byte_arr = io.BytesIO()
-                original_image_PIL.save(byte_arr, format='PNG')
-                original_image = byte_arr.getvalue()
-            # with open('outputoriginal.png', 'wb') as f:
-            #     f.write(original_image)
-            original_base64 = base64.b64encode(original_image).decode()
-        with open(mask_output_path, "rb") as f:
-            mask_image = f.read()
-            if(img_height*img_width>1200*1200):
-                mask_image = Image.open(io.BytesIO(mask_image)).resize((new_width,new_height),resample=Image.BICUBIC)
-                byte_arr = io.BytesIO()
-                mask_image.save(byte_arr, format='PNG')
-                mask_image = byte_arr.getvalue()
-            # with open('outputmask.png', 'wb') as f:
-            #     f.write(mask_image)
-            mask_base64 = base64.b64encode(mask_image).decode()
-
-        if is_trans == False and alternate_background == False:
-            url = "http://127.0.0.1:8848"         
-            payload = {
-                "prompt":"best quality,the background is the clean,",
-                "negative_prompt":"1girl,human",
-                "override_settings":{
-                    "sd_model_checkpoint":"Violet\Mix_Beta\Violet_mix_beta_002",
-                    "sd_vae":"Automatic"
-                },
-                "seed":-1,
-                "batch_size":1,
-                "n_iter":1,
-                "steps":20,
-                "cfg_scale":7,
-                "width":new_width,
-                "height":new_height,
-                "resotre_faces":False,
-                "tiling":False,
-                "eta":0,
-                "script_args":[],
-                "sampler_index":"Euler a",
-                "init_images":[original_base64],
-                "mask":mask_base64,
-                "resize_mode":1,
-                "denoising_strength":1,
-                "mask_blur":0,
-                "mask_mode":0,    
-            }
-            
-
-            while True:
-                try:
-                    response = requests.post(url=f'{url}/sdapi/v1/img2img', json=payload)
-                    break
-                except:
-                    print("服务器未启,请尝试启动Webui进程, http://127.0.0.1:8848 ")
-                    break
-            # response = requests.post(url=f'{url}/sdapi/v1/img2img', json=payload)
-            r = response.json()
-            #print(r)
-            for i in r['images']:
-                image = Image.open(io.BytesIO(base64.b64decode(i.split(",", 1)[0])))
-                #如果之前降采样了，现在要恢复原来的大小
-                if(img_width*img_height>1200*1200):
-                    image=image.resize((img_width,img_height),resample=Image.BICUBIC)
-                image.save(background_path)    
-                print("\nbackground image saved")
-            #关闭sd进程
-            # diffusion_process.terminate()
-            # if diffusion_process.poll() is None:
-            #     diffusion_process.kill()
-            #print("sd process killed")
-        else:
-            image = Image.open(background_path)
-            if(img_width*img_height>1200*1200):
-                image=image.resize((img_width,img_height),resample=Image.BICUBIC)
-            image.save(background_path)  
+        #else:
+        #    image = Image.open(background_path)
+        #    if(img_width*img_height>1200*1200):
+        #        image=image.resize((img_width,img_height),resample=Image.BICUBIC)
+        #    image.save(background_path)  
     
     def process_and_save_emotion_pose(self,emotion_video_path,background_output_video_path,face_landmarker_path, emotion_pose_save_path):
         parser = argparse.ArgumentParser(description='Control characters with movement captured by iFacialMocap.')
@@ -1143,7 +1045,6 @@ class units():
 
             #image = Image.fromarray(resized_image)
             #resized_image.save(r'C:\Users\Violet\Desktop\新建文件夹\output_image.png')
-
             self.step4(out,background,resized_image,is_trans)
             print('img_%d saved'%img_num)
         print("###################################################视频拼接完成！###################################################")

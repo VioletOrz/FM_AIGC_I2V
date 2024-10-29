@@ -516,11 +516,7 @@ class units2():
             # if diffusion_process.poll() is None:
             #     diffusion_process.kill()
             #print("sd process killed")
-        else:
-            image = Image.open(background_path)
-            if(img_width*img_height>1200*1200):
-                image=image.resize((img_width,img_height),resample=Image.BICUBIC)
-            image.save(background_path)  
+
 
     def chushihua(self,input_image_path,emotion_video_path,background_path):
         img=Image.open(input_image_path)
@@ -699,8 +695,7 @@ class units2():
             resized_image=Image.fromarray(resized_image)#PIL图像
 
             savepath = img_pack_path_name + f'/{mode}_{strength}/img_{img_num:03}.webp'
-            if not os.path.exists(img_pack_path_name + '/'+mode+'_'+str(strength)):
-                os.makedirs(img_pack_path_name+'/'+mode+'_'+str(strength))
+            
             resized_image=self.step4(Image.open(background_path),resized_image,input_image_path,is_trans)
             resized_image.save(savepath)
             print("saving to:",savepath)
@@ -750,6 +745,10 @@ class units2():
         eyebrow_filter=PoseFilter2(12)#眉毛滤波器
         eyes_filter = PoseFilter2(1)#眼睛滤波器
         body_filter = PoseFilter2(15)#身体滤波器
+
+        if not os.path.exists(img_pack_path_name + '/'+mode+'_'+str(strength)):
+                os.makedirs(img_pack_path_name+'/'+mode+'_'+str(strength))
+
         img_num=0
         cap = cv2.VideoCapture(emotion_video_path)
         a=0
@@ -788,8 +787,7 @@ class units2():
             #savepath='C:/Users/Violet/Desktop/facial/beishang2/'+mode+'_'+str(strength)+'/img_%d.webp' % img_num
             savepath = img_pack_path_name + f'/{mode}_{strength}/img_{img_num:03}.webp'
 
-            if not os.path.exists(img_pack_path_name + '/'+mode+'_'+str(strength)):
-                os.makedirs(img_pack_path_name+'/'+mode+'_'+str(strength))
+            
             #把透明人物拼接到背景上，输出的是pil格式
             resized_image=self.step4(Image.open(background_path),resized_image,input_image_path,is_trans)
             #不超分（二选一）
@@ -807,100 +805,6 @@ class units2():
             # print("saving to:",savepath)
 
         cap.release()
-
-    def process2(self,emotion_video_path,mode,input_image_path,background_path,img_pack_path_name,face_landmarker_path,is_trans=False):
-        img=Image.open(input_image_path)
-        image_width,image_height=img.size
-        parser = argparse.ArgumentParser(description='Control characters with movement captured by iFacialMocap.')
-        parser.add_argument(
-                '--model',
-                type=str,
-                required=False,
-                default='standard_float',
-                choices=['standard_float', 'separable_float', 'standard_half', 'separable_half'],
-                help='The model to use.')
-        #parser.add_argument('--config', default="./config/sitting.yaml", type=str, required=False, help='Path to the config file.')
-        #parser.add_argument('--pipeline', type=str, default="PIFDFSFRF",required=False, help='Pipeline.')
-        #parser.add_argument('--is_trans', type=str, default="None", required=False, help='Generate a transparent no background image package.')
-        #parser.add_argument('--package_name', type=str, default=None, required=False, help='Output package name.')
-        args, unknown_args = parser.parse_known_args()
-        device = torch.device('cuda')
-        try:
-                poser = load_poser(args.model, device)#加载模型
-        except RuntimeError as e:
-                print(e)
-                sys.exit()
-        device = torch.device("cuda:0")
-        pose_converter = MediaPoseFacePoseConverter00()
-        face_landmarker_base_options = mediapipe.tasks.BaseOptions(
-                model_asset_path=face_landmarker_path)#加载人脸标记器
-        options = mediapipe.tasks.vision.FaceLandmarkerOptions(
-                base_options=face_landmarker_base_options,
-                running_mode=mediapipe.tasks.vision.RunningMode.VIDEO,
-                output_face_blendshapes=True,
-                output_facial_transformation_matrixes=True,
-                num_faces=1)
-        transform_strength=[0.0]
-        for strength in transform_strength:
-                print("###################################################开始合成%s表情的强度为%f###################################################"%(mode,strength))
-                face_landmarker = mediapipe.tasks.vision.FaceLandmarker.create_from_options(options)
-                video_capture = cv2.VideoCapture(emotion_video_path)
-                main_frame = MainFrame2(poser,pose_converter, device,video_capture,face_landmarker)
-                main_frame.load_image1(input_image_path)
-                eyebrow_filter=PoseFilter2(12)#眉毛滤波器
-                eyes_filter = PoseFilter2(1)#眼睛滤波器
-                body_filter = PoseFilter2(15)#身体滤波器
-                img_num=0
-                cap = cv2.VideoCapture(emotion_video_path)
-                a=0
-                k=1
-                while cap.isOpened() and img_num<100:
-                    img_num+=1
-                    ret, frame = cap.read()
-                    if not ret:
-                        break
-                    main_frame.update_capture_frame(frame)
-                    if k==1:
-                        a=a+0.03
-                    if a>=0.3:
-                        k=0
-                    if k==0:
-                        a=a-0.03
-                    if a<=-0.3:
-                        k=1
-
-                    numpy_image=main_frame.update_result_image_bitmap(eyebrow_filter,eyes_filter,body_filter,mode,strength,a)#嘴巴mode放在这里
-                    if numpy_image is None:
-                        continue
-                    #resized_image = cv2.resize(numpy_image, (image_width,image_height))#numpy图像
-                    resized_image=cv2.cvtColor(numpy_image,cv2.COLOR_BGRA2RGBA)
-                    #resized_image=cv2.cvtColor(resized_image,cv2.COLOR_BGRA2RGBA)
-                    resized_image=Image.fromarray(resized_image)#PIL图像  
-                    
-
-                    #保存路径
-                    #savepath='C:/Users/Violet/Desktop/facial/beishang2/'+mode+'_'+str(strength)+'/img_%d.webp' % img_num
-                    savepath = img_pack_path_name+f'/{mode}_{strength}/img_{img_num:03}.webp'
-                    #print("#########",savepath)
-                    if not os.path.exists(img_pack_path_name+'/'+mode+'_'+str(strength)):
-                        os.makedirs(img_pack_path_name+"/"+mode+'_'+str(strength))
-                    #把透明人物拼接到背景上，输出的是pil格式
-                    resized_image=self.step4(Image.open(background_path),resized_image,input_image_path,is_trans)
-                    #不超分（二选一）
-                    resized_image.save(savepath)
-                    print("saving to:",savepath)
-                    #超分（二选一）
-                    # resized_image=np.array(resized_image)
-                    # resized_image=psr.super_resolve_video("D:\\FaceMind_AIGC\\APISR\\pretrained\\4x_APISR_RRDB_GAN_generator.pth",resized_image)
-                    # resized_image = resized_image.squeeze(0)
-                    # to_pil=transforms.ToPILImage()                    
-                    # pil_img=to_pil(resized_image)
-                    # b,g,r=pil_img.split()
-                    # pil_img=Image.merge("RGB",(r,g,b))
-                    # pil_img.save(savepath)
-                    # print("saving to:",savepath)
-
-                cap.release()
     
     def load_emotion_pose_from_tensor_list(self, emotion_pose_load_path):
         video_name = os.path.basename(emotion_pose_load_path)
@@ -918,6 +822,8 @@ class units2():
             futures=[]
             for mode_strength, pose_tensor_list in emotion_pose_tensor_list.items():
                 mode, strength = mode_strength.split('_')
+                if not os.path.exists(img_pack_path_name + '/'+mode+'_'+str(strength)):
+                    os.makedirs(img_pack_path_name+'/'+mode+'_'+str(strength))
                 strength = float(strength)
                 print("###################################################开始合成%s表情###################################################"%mode)
                 if  mode=='a'or mode=='i'or mode=='u'or mode=='e'or mode=='o' :      
