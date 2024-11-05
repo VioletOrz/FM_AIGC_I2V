@@ -134,7 +134,7 @@ def change_position(img_path,cropped_dir=''):
   current_working_dir = os.getcwd()
   parser.add_argument('--weights', nargs='+', type=str, default=current_working_dir+'/lib/CartoonSegmentation/yolov5x_anime.pt', help='model.pt path(s)')
   parser.add_argument('--source', type=str, default=img_path, help='source')  # file/folder, 0 for webcam
-  parser.add_argument('--output', type=str, default=r'D:\FaceMind_AIGC\CartoonSegmentation\output1', help='output folder')  # output folder
+  parser.add_argument('--output', type=str, default=current_working_dir+'/lib/CartoonSegmentation/output', help='output folder')  # output folder
   parser.add_argument('--img-size', type=int, default=640, help='inference size (pixels)')
   parser.add_argument('--conf-thres', type=float, default=0.4, help='object confidence threshold')
   parser.add_argument('--iou-thres', type=float, default=0.5, help='IOU threshold for NMS')
