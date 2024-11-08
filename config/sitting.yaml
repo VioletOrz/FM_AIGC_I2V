@@ -1,0 +1,48 @@
+# Configuration for image generation settings
+Path:
+  original_image_path: 'data/ani-pic/61.png' #This in input image
+
+  emotion_video_path: 'data/emotion/' #The preview mp4 reference emotion video
+  emotion_video: '2.mp4' #
+  emotion_pose_save_path: 'data/pose/' #Save the file processed into pose data
+  emotion_pose_load_path: 'data/pose/2.mp4' #Pose data (emotion tensor) path
+
+  background_path: 'data/background/background.png' #background.png 
+  alternate_background_path: 'data/background/alternate_background.png' #This parameter only takes effect if alternate_background is set to True
+  mask_output_dir: 'data/mask_output/' #Mask output flie
+  input_image_path: 'data/mask_output/img_0.png' #This a input,the parent path must be the same as above, and the image name cannot be changed
+
+  cropped_dir: 'data/cropped_dir/' #cropped image output flie
+  #cropped_path: "data/cropped_dir/cropped_image.png" #This a input,the parent path must be the same as above, and the image name cannot be changed
+  
+  
+  background_output_video_path: 'data/background_output/' #Preview video output file
+
+  vsr_output_video_path: 'data/final_output/output.mp4' #Enabled, don't care
+
+
+  
+  img_pack_save_path: 'C:/Users/Violet/Desktop/facial/' #This is output path
+  img_pack_file_name: 'OOX' #This is output flie,usually,this is the id of the character
+  base_pack_name: 'base_image_package' #
+  dehazed_pack_name: "dehazed_image_package" #Dehazed images output file
+  SuperResHD_pack_name: 'SuperResHD_image_package' #Super resolution HD inpaint algorithm
+  resized_pack_name: "resized_image_package" #
+  DiffHD_pack_name: 'DiffHD_image_package' #
+  DiffLD_pack_name: 'DiffLD_image_package' #
+
+
+mode:
+  is_trans: True #This parameter controls whether the generated image has a transparent background (only characters, no background)
+  alternate_background: False #Opening will use the image uploaded by the user instead of the original background,
+  emotion_from_tensor: False #Read the processed pose data set from a.pt file instead of a.mp4 video
+  #force_extension: 'webp' # None 'jpg' 'png' 'webp' It must be a string or None #This parameter controls the format in which the image is saved. Setting it to None automatically selects the format
+
+model_path:
+  face_landmarker_path: 'lib\talking\data\face_landmarker_v2_with_blendshapes.task' #Usually this path does not need to be modified
+  eyebrow_path: 'lib\talking\data\models' #This is not a parameter, the weight of your download should be placed in this position
+  yolo_model_path: '/lib/CartoonSegmentation/yolov5x_anime.pt' #This is not a parameter, the weight of your download should be placed in this position
+  AniSam_model_path: '/lib/CartoonSegmentation/models/AnimeInstanceSegmentation/rtmdetl_e60.ckpt' #This is not a parameter, the weight of your download should be placed in this position
+  refine_model_path: '/lib/CartoonSegmentation/models/AnimeInstanceSegmentation/refine_last.ckpt' #This is not a parameter, the weight of your download should be placed in this position
+  HD_model_path: 'lib\Real_ESRGAN\weights\RealESRGAN_x4plus_anime_6B.pth'
+
