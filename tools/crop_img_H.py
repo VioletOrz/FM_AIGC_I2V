@@ -20,5 +20,6 @@ def crop_images_in_subfolders(folder_path, crop_height=100):
                 print(f"Cropped {file_name} in {root}")
 
 # 使用指定的文件夹路径
-folder_path = r"C:\Users\Violet\Desktop\Difference_S"
-crop_images_in_subfolders(folder_path, crop_height=100)
+if __name__ == "__main__":
+    folder_path = r"C:\Users\Violet\Desktop\Difference_S"
+    crop_images_in_subfolders(folder_path, crop_height=100)

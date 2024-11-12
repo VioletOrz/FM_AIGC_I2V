@@ -35,11 +35,12 @@ def rename_images_in_folder(folder_path):
                 print(f"Renamed {old_path} to {new_path}")
 
 # 使用指定的文件夹路径
-folder_path = "你的文件夹路径"
-rename_images_in_folder(folder_path)
+if __name__ == "__main__":
+    #folder_path = "你的文件夹路径"
+    #rename_images_in_folder(folder_path)
 
-# 使用指定的文件夹路径
-folder_path = r"C:\Users\Violet\Desktop\新建文件夹"
-deep = 3 #图片所处的目录深度
-#rename_images_in_folder_set_deep(folder_path, deep)
-rename_images_in_folder(folder_path)
+    # 使用指定的文件夹路径
+    folder_path = r"C:\Users\Violet\Desktop\新建文件夹"
+    deep = 3 #图片所处的目录深度
+    #rename_images_in_folder_set_deep(folder_path, deep)
+    rename_images_in_folder(folder_path)

@@ -36,8 +36,42 @@ def create_video_from_images(folder_path, output_video_path, fps=30):
     video_writer.release()
     print(f"Video saved at {output_video_path} with FPS: {fps}")
 
+def images_to_video(image_folder, output_video_path, fps=30):
+    # 获取符合命名格式的图片文件并按文件名排序
+    images = [img for img in os.listdir(image_folder) if img.startswith("img_") and img.endswith(".webp")]
+    images.sort()
+
+    # 检查图片是否存在
+    if not images:
+        print("没有符合条件的图片")
+        return
+
+    # 读取第一张图片以获取视频的尺寸
+    first_image_path = os.path.join(image_folder, images[0])
+    frame = cv2.imread(first_image_path)
+    height, width, _ = frame.shape
+
+    # 定义视频写入对象
+    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+    video = cv2.VideoWriter(output_video_path, fourcc, fps, (width, height))
+
+    # 逐帧将图片写入视频
+    for image_file in images:
+        image_path = os.path.join(image_folder, image_file)
+        frame = cv2.imread(image_path)
+        if frame is None:
+            print(f"无法读取图片 {image_file}")
+            continue
+        video.write(frame)
+    
+    # 释放视频对象
+    video.release()
+    print(f"视频已保存到 {output_video_path}")
+
 # 使用指定的文件夹路径、输出视频路径和帧率
-folder_path = r"C:\Users\Violet\Desktop\facial\Elysia\Difference_S\b_0.0"
-output_video_path = r"C:\Users\Violet\Desktop\facial/output_video.mp4"
-fps = 30  # 自定义帧率
-create_video_from_images(folder_path, output_video_path, fps)
+if __name__ == "__main__":
+    folder_path = r"C:\Users\Violet\Desktop\facial\test_trans\base_image_package\a_1.0"
+    output_video_path = r"C:\Users\Violet\Desktop\facial/output_video.mp4"
+    fps = 30  # 自定义帧率
+    images_to_video(folder_path, output_video_path, fps=30)
+    #create_video_from_images(folder_path, output_video_path, fps)

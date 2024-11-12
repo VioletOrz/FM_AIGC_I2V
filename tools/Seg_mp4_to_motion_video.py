@@ -61,6 +61,7 @@ def split_video(input_video_path, output_folder, target_fps=30, segment_frames=1
     cap.release()
 
 # 使用示例
-input_video_path = r"D:\FM_AIGC_I2V\data\emotion\x1.mp4"
-output_folder = r"D:\FM_AIGC_I2V\data\emotion"
-split_video(input_video_path, output_folder)
+if __name__ == "__main__":
+    input_video_path = r"D:\FM_AIGC_I2V\data\emotion\x1.mp4"
+    output_folder = r"D:\FM_AIGC_I2V\data\emotion"
+    split_video(input_video_path, output_folder)

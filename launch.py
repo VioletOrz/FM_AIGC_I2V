@@ -375,73 +375,103 @@ def Generate_image_package_pipeline_from_String(config, pipeline: str):
     cnt  = 0
     for process_step in pipeline:
         if process_step not in "PIDSRFpidsr":
+            print("###################################################################################################")
             print(f"The pipeline char is must in P, I/i, D/d, S/s, R/r, F, the input pipeline char is: {process_step}.")
+            print("###################################################################################################")
             return
         if process_step == 'p':
             if cnt != 0 :
+                print("###################################################################################################")
                 print(f"The pipeline is noncompliant, p must on top.")
+                print("###################################################################################################")
                 return
             sys_output = sys_output + 'Process emotion video to pose tensor --> '
         if process_step == 'P':
             if cnt != 0 and pipeline[cnt - 1] != 'p':
+                print("###################################################################################################")
                 print(f"The pipeline is noncompliant, P must on top or after p.")
+                print("###################################################################################################")
                 return
             sys_output = sys_output + 'Preview --> '
         elif process_step == 'I':
             if cnt != 0 :
                 if cnt > 2:
+                    print("###################################################################################################")
                     print(f"The pipeline is noncompliant, I must on top or afer P/p")
+                    print("###################################################################################################")
                     return
                 if cnt == 1 and pipeline[cnt - 1] != 'P' and pipeline[cnt - 1] != 'p':
+                    print("###################################################################################################")
                     print(f"The pipeline is noncompliant, I must on top or afer P/p")
+                    print("###################################################################################################")
                     return
                 if cnt == 2 and pipeline[cnt - 1] != 'P':
+                    print("###################################################################################################")
                     print(f"The pipeline is noncompliant, I must on top or afer P/p")
+                    print("###################################################################################################")
                     return
             sys_output = sys_output + 'Generate Image package --> '
         elif process_step == 'D':
             if cnt != 0 :
-                if cnt - 1 < 0:
-                    print(f"The pipeline is noncompliant, D must after I/i or F.")
-                    return
                 last = pipeline[cnt - 1]
                 if last not in "IiF":
+                    print("###################################################################################################")
                     print(f"The pipeline is noncompliant, D must after I/i or F.")
+                    print("###################################################################################################")
                     return
+            if cnt - 1 < 0:
+                print("###################################################################################################")
+                print(f"The pipeline is noncompliant, D must after I/i or F.")
+                print("###################################################################################################")
+                return
             sys_output = sys_output + 'Dehazing process --> '
         elif process_step == 'S':
             if cnt != 0 :
-                if cnt - 1 < 0:
-                    print(f"The pipeline is noncompliant, S must after I/i, D/d, or F.")
-                    return
                 last = pipeline[cnt - 1]
                 if last not in "IiDdF":
+                    print("###################################################################################################")
                     print(f"The pipeline is noncompliant, S must after I/i, D/d, or F.")
+                    print("###################################################################################################")
                     return
+            if cnt - 1 < 0:
+                print("###################################################################################################")
+                print(f"The pipeline is noncompliant, S must after I/i, D/d, or F.")
+                print("###################################################################################################")
+                return
             sys_output = sys_output + 'SuperRes HD process --> '
         elif process_step == 'R':
             if cnt != 0 :
-                if cnt - 1 < 0:
-                    print(f"The pipeline is noncompliant, R must after S/s or F.")
-                    return
                 last = pipeline[cnt - 1]
                 if last not in "SsF":
+                    print("###################################################################################################")
                     print(f"The pipeline is noncompliant, R must after S/s or F.")
+                    print("###################################################################################################")
                     return
+            if cnt - 1 < 0:
+                print("###################################################################################################")
+                print(f"The pipeline is noncompliant, R must after S/s or F.")
+                print("###################################################################################################")
+                return
             sys_output = sys_output + 'Resize H and W to half Res --> '
         elif process_step == 'F':
             if cnt != 0 :
-                if cnt - 1 < 0:
-                    print(f"The pipeline is noncompliant, F must after I/i, D/d, S/s, or R/r.")
-                    return
                 last = pipeline[cnt - 1]
                 if last not in "IDSRidsr":
+                    print("###################################################################################################")
                     print(f"The pipeline is noncompliant, F must after I/i, D/d, S/s, or R/r.")
+                    print("###################################################################################################")
                     return
+            if cnt - 1 < 0:
+                print("###################################################################################################")
+                print(f"The pipeline is noncompliant, F must after I/i, D/d, S/s, or R/r.")
+                print("###################################################################################################")
+                return
             sys_output = sys_output + f'Generate {last} Difference Image package.  ||  '
         elif process_step in "idsr":
             if cnt != 0 :
+                print("###################################################################################################")
                 print(f"The pipeline is noncompliant, {process_step} must on top.")
+                print("###################################################################################################")
                 return
             sys_output = sys_output + f'From last Interrupt Step {process_step} Continue --> '
         cnt = cnt + 1

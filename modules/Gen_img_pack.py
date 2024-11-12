@@ -96,6 +96,9 @@ class PoseFilter2:
         ans=np.mean(self.history_pose, axis=0).tolist()
         # print("滤波后：\n",ans)
         return ans
+    
+    def length(self):
+        return len(self.history_pose),self.window_size
 
 class MainFrame2():
 
@@ -179,7 +182,12 @@ class MainFrame2():
              return
         current_pose = self.pose_converter.convert(self.mediapipe_face_pose)#表示视频当前帧的面部姿势
         #眉毛0~11,使用中等强度的滤波器
-        current_pose[0:12]=eyebrow_filter.update(current_pose[0:12])
+        eyebrow_strength = [i*0.2 for i in current_pose[0:12]]
+        current_pose[0:12]=eyebrow_filter.update(eyebrow_strength)
+        #current_pose[0:12]=eyebrow_filter.update(current_pose[0:12])
+        #hlen,wsize = eyebrow_filter.length()
+        #if hlen < wsize:
+        #    current_pose[0:12] = [i*(hlen/wsize)*0.35 for i in current_pose[0:12]]
         #眼睛12~25，使用最弱的滤波器，防止眼睛不变
         current_pose[12:26]=eyes_filter.update(current_pose[12:26])
          #嘴巴26~36，使用输入的参数控制
@@ -241,7 +249,12 @@ class MainFrame2():
              return
         current_pose = self.pose_converter.convert(self.mediapipe_face_pose)#表示视频当前帧的面部姿势
         #眉毛0~11,使用中等强度的滤波器
-        current_pose[0:12]=eyebrow_filter.update(current_pose[0:12])
+        eyebrow_strength = [i*0.2 for i in current_pose[0:12]]
+        current_pose[0:12]=eyebrow_filter.update(eyebrow_strength)
+        #current_pose[0:12]=eyebrow_filter.update(current_pose[0:12])
+        #hlen,wsize = eyebrow_filter.length()
+        #if hlen < wsize:
+        #    current_pose[0:12] = [i*(hlen/wsize)*0.35 for i in current_pose[0:12]]
         #眼睛12~25，使用最弱的滤波器，防止眼睛不变
         current_pose[12:26]=eyes_filter.update(current_pose[12:26])
          #嘴巴26~36，使用输入的参数控制
@@ -614,7 +627,7 @@ class units2():
         video_capture = cv2.VideoCapture(emotion_video_path)
         main_frame = MainFrame2(poser,pose_converter, device,video_capture,face_landmarker)
         #main_frame.load_image1(input_image_path)
-        eyebrow_filter=PoseFilter2(12)#眉毛滤波器
+        eyebrow_filter=PoseFilter2(20)#眉毛滤波器
         eyes_filter = PoseFilter2(1)#眼睛滤波器
         body_filter = PoseFilter2(15)#身体滤波器
         img_num=0
@@ -629,13 +642,21 @@ class units2():
                 break
             main_frame.update_capture_frame(frame)
             if k==1:
+                a=a+0.003
+                if a>=0.1:
+                    k=0
+            if k==0:
+                a=a-0.003
+                if a<=-0.3:
+                    k=1
+            """if k==1: 运动参数,a的数值越大运动幅度越大
                 a=a+0.03
             if a>=0.3:
                 k=0
             if k==0:
                 a=a-0.03
             if a<=-0.3:
-                k=1
+                k=1"""
             pose_tensor_list = main_frame.process_emotion_pose_pre_frame(eyebrow_filter,eyes_filter,body_filter,mode,strength,a,pose_tensor_list)
                 #numpy_image=main_frame.update_result_image_bitmap(eyebrow_filter,eyes_filter,body_filter,mode,strength,a)#嘴巴mode放在这里
         cap.release()
@@ -643,8 +664,8 @@ class units2():
         return {f'{mode}_{strength}': pose_tensor_list}
 
     def process_from_pose_tensor(self,pose_tensor_list,mode,transform_strength,input_image_path,background_path,img_pack_path_name,face_landmarker_path,is_trans=False):
-        #img=Image.open(input_image_path)
-        #image_width,image_height=img.size
+        img=Image.open(input_image_path)
+        image_width,image_height=img.size
         parser = argparse.ArgumentParser(description='Control characters with movement captured by iFacialMocap.')
         parser.add_argument(
                 '--model',
@@ -691,6 +712,8 @@ class units2():
             numpy_image = main_frame.apply_emotion_pose(pose)
             if numpy_image is None:
                 continue
+            #resized_image = cv2.resize(numpy_image, (image_width,image_height))#numpy图像
+            #resized_image=cv2.cvtColor(resized_image,cv2.COLOR_BGRA2RGBA)
             resized_image=cv2.cvtColor(numpy_image,cv2.COLOR_BGRA2RGBA)
             resized_image=Image.fromarray(resized_image)#PIL图像
 
@@ -742,7 +765,7 @@ class units2():
         video_capture = cv2.VideoCapture(emotion_video_path)
         main_frame = MainFrame2(poser,pose_converter, device,video_capture,face_landmarker)
         main_frame.load_image1(input_image_path)
-        eyebrow_filter=PoseFilter2(12)#眉毛滤波器
+        eyebrow_filter=PoseFilter2(20)#眉毛滤波器
         eyes_filter = PoseFilter2(1)#眼睛滤波器
         body_filter = PoseFilter2(15)#身体滤波器
 
@@ -826,7 +849,8 @@ class units2():
                     os.makedirs(img_pack_path_name+'/'+mode+'_'+str(strength))
                 strength = float(strength)
                 print("###################################################开始合成%s表情###################################################"%mode)
-                if  mode=='a'or mode=='i'or mode=='u'or mode=='e'or mode=='o' :      
+                if  mode=='a'or mode=='i'or mode=='u'or mode=='e'or mode=='o' :
+                    #self.process_from_pose_tensor(pose_tensor_list,mode,strength,input_image_path,background_path,img_pack_path_name,face_landmarker_path,is_trans)  
                     #futures.append(executor.submit(self.process, options,emotion_video_path,poser,pose_converter,device,image_width,image_height,mode,input_image_path,background_path))
                     futures.append(executor.submit(self.process_from_pose_tensor,pose_tensor_list,mode,strength,input_image_path,background_path,img_pack_path_name,face_landmarker_path,is_trans))
                     #futures.append(executor.submit(self.process_from_pose_tensor,pose_tensor_list,mode,strength,input_image_path,background_path,img_pack_path_name,face_landmarker_path,is_trans))
@@ -879,13 +903,32 @@ class units2():
     #     return new_img
     
     def step4(self,background,img,input_image_path,is_trans=False): 
+        '''
+        #把人物图片从正方形裁剪出来
+        left=self.left_in_square
+        top=self.top_in_square
+        right=self.left_in_square+self.mask_width
+        bottom=self.top_in_square+self.mask_height 
+
+        img = img.crop((left, top, right, bottom))  # 把人物图片从正方形裁剪出来
+        # 把人物和背景的拼接结果存到new_img里            
+        new_img = Image.new('RGBA', background.size)
+        if is_trans==False: new_img.paste(background)             
+        new_img.paste(img, (self.left, self.top), img)
+        '''
         img1=Image.open(input_image_path)
         image_width,image_height=img1.size
-
-        left=self.left_in_square*512/image_width
-        top=self.top_in_square*512/image_width
-        right=(self.left_in_square+self.mask_width)*512/image_width 
-        bottom=(self.top_in_square+self.mask_height)*512/image_width 
+        
+        if is_trans:
+            left=self.left_in_square*512/image_width
+            top=self.top_in_square*512/image_width
+            right=(self.left_in_square+self.mask_width)*512/image_width 
+            bottom=(self.top_in_square+self.mask_height)*512/image_width 
+        else:
+            left=self.left_in_square*512/image_width
+            top=self.top_in_square*512/image_width
+            right=(self.left_in_square+self.mask_width)*512/image_width 
+            bottom=(self.top_in_square+self.mask_height)*512/image_width 
 
         # 把人物图片从正方形裁剪出来
         img = img.crop((left, top, right, bottom))  
@@ -902,13 +945,15 @@ class units2():
         k3=a[0]
         k4=a[1] 
         if is_trans:
-            new_img = Image.new('RGBA', (k1,k2))
+            #new_img = Image.new('RGBA', (k1,k2))
+            new_img = Image.new('RGBA', (img.size[0],img.size[1]))
             #new_img.save(r'D:\FM_AIGC_I2V\data\background\a.png')
             #background = background.resize((k1,k2), Image.LANCZOS)
             #new_img.paste(background) 
             #new_img.save(r'D:\FM_AIGC_I2V\data\background\b.png')
-            shape1,shape2=int(self.left*512/image_width), int(self.top*512/image_width)         
-            new_img.paste(img, (shape1,shape2), img)
+            #shape1,shape2=int(self.left*512/image_width), int(self.top*512/image_width)         
+            new_img.paste(img,)
+            #new_img.paste(img, (shape1,shape2), img)
             #new_img.save(r'D:\FM_AIGC_I2V\data\background\c.png')
         else:
             new_img = Image.new('RGBA', (k1,k2))

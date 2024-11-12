@@ -204,9 +204,13 @@ class PoseFilter:
         #     print(row)
         if len(self.history_pose) > self.window_size:
             self.history_pose.pop(0)
+        
         ans=np.mean(self.history_pose, axis=0).tolist()
         # print("滤波后：\n",ans)
         return ans
+    
+    def length(self):
+        return len(self.history_pose),self.window_size
 
 class MainFrame():
 
@@ -293,7 +297,12 @@ class MainFrame():
         current_pose = self.pose_converter.convert(self.mediapipe_face_pose)#表示视频当前帧的面部姿势
         # print(current_pose)
         #眉毛0~11,使用中等强度的滤波器
-        current_pose[0:12]=eyebrow_filter.update(current_pose[0:12])
+        eyebrow_strength = [i*0.2 for i in current_pose[0:12]]
+        current_pose[0:12]=eyebrow_filter.update(eyebrow_strength)
+        #current_pose[0:12]=eyebrow_filter.update(current_pose[0:12])
+        #hlen,wsize = eyebrow_filter.length()
+        #if hlen < wsize:
+        #    current_pose[0:12] = [i*(hlen/wsize)*0.1 for i in current_pose[0:12]]
         #眼睛12~25，使用最弱的滤波器，防止眼睛不变
         current_pose[12:26]=eyes_filter.update(current_pose[12:26])
         #嘴巴26~36，使用输入的参数控制
@@ -405,7 +414,13 @@ class MainFrame():
         current_pose = self.pose_converter.convert(self.mediapipe_face_pose)#表示视频当前帧的面部姿势
         # print(current_pose)
         #眉毛0~11,使用中等强度的滤波器
-        current_pose[0:12]=eyebrow_filter.update(current_pose[0:12])
+        eyebrow_strength = [i*0.2 for i in current_pose[0:12]]
+        current_pose[0:12]=eyebrow_filter.update(eyebrow_strength)
+        #current_pose[0:12]=eyebrow_filter.update(current_pose[0:12])
+        #hlen,wsize = eyebrow_filter.length()
+        #if hlen < wsize:
+        #    current_pose[0:12] = [i*(hlen/wsize)*0.1 for i in current_pose[0:12]]
+        #current_pose[0:12]=eyebrow_filter.update(current_pose[0:12])
         #眼睛12~25，使用最弱的滤波器，防止眼睛不变
         current_pose[12:26]=eyes_filter.update(current_pose[12:26])
         #嘴巴26~36，使用输入的参数控制
@@ -733,7 +748,7 @@ class units():
         cap = cv2.VideoCapture(emotion_video_path)
         # 逐帧读取视频
         img_num=0
-        eyebrow_filter=PoseFilter(12)#眉毛滤波器
+        eyebrow_filter=PoseFilter(20)#眉毛滤波器
         eyes_filter = PoseFilter(1)#眼睛滤波器
         body_filter = PoseFilter(15)#身体滤波器
         fps=self.get_video_fps(emotion_video_path)
@@ -882,7 +897,7 @@ class units():
             #image = Image.fromarray(resized_image)
             #resized_image.save(r'C:\Users\Violet\Desktop\新建文件夹\output_image.png')
 
-            self.step4(out,background,resized_image,is_trans)
+            self.step4(out,background,resized_image,is_trans,img_num)
             print('img_%d saved'%img_num)
         print("###################################################视频拼接完成！###################################################")
         out.release()
@@ -937,7 +952,8 @@ class units():
         cap = cv2.VideoCapture(emotion_video_path)
         # 逐帧读取视频
         img_num=0
-        eyebrow_filter=PoseFilter(12)#眉毛滤波器
+        eyebrow_filter=PoseFilter(20)#眉毛滤波器
+        #eyebrow_filter=PoseFilter(12)#眉毛滤波器
         eyes_filter = PoseFilter(1)#眼睛滤波器
         body_filter = PoseFilter(15)#身体滤波器
 
@@ -1052,7 +1068,7 @@ class units():
         out.release()
 
 
-    def step4(self,out,background,img,is_trans=False): 
+    def step4(self,out,background,img,is_trans=False,img_num = 0): 
 
         #把人物图片从正方形裁剪出来
         left=self.left_in_square
@@ -1069,6 +1085,9 @@ class units():
         # 保存拼接结果
         new_img_array = np.array(new_img)  # 将PIL图像转换为NumPy数组
         new_img_array = cv2.cvtColor(new_img_array, cv2.COLOR_RGBA2BGR)  # 将颜色通道顺序从RGBA转换为BGR，因为PIL颜色通道顺序是RGBA，而cv2颜色通道顺序是BGR
+
+        #image = Image.fromarray(new_img_array)
+        #new_img.save(f'C:/Users/Violet/Desktop/facial/test/img_{img_num:03}.webp')
         out.write(new_img_array)
 
     def step5(self,weight_path,vsr_input_video_path,vsr_output_video_path):

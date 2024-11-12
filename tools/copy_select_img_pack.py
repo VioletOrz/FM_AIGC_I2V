@@ -23,16 +23,17 @@ def copy_specified_folders_with_structure(src_folder, target_folder, folder_name
                 
                 # 在目标文件夹创建保留父目录结构的路径
                 dest_dir_path = os.path.join(target_folder, relative_path, dir_name)
-                
+                 
                 # 递归复制整个文件夹内容到目标路径
                 shutil.copytree(source_dir_path, dest_dir_path, dirs_exist_ok=True)
                 print(f"Copied {source_dir_path} to {dest_dir_path}")
 
 # 使用示例
-src_folder = r"E:\图包"
-target_folder = r"E:\图包_i"
-folder_names = ["Difference_I","cropped_dir"]  # 可以指定多个文件夹名称
-copy_specified_folders_with_structure(src_folder, target_folder, folder_names)
+if __name__ == "__main__":
+    src_folder = r"E:\图包\005"
+    target_folder = r"E:\图包005_s"
+    folder_names = ["Difference_S","cropped_dir"]  # 可以指定多个文件夹名称
+    copy_specified_folders_with_structure(src_folder, target_folder, folder_names)
 
 
 
