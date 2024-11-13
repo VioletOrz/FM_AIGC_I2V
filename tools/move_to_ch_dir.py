@@ -85,7 +85,7 @@ if __name__ == "__main__":
     source_folder = 'C:/Users/Violet/Desktop/facial/'
     target_root = "E:/图包/005"
     print_character_name_dict(yaml_path)
-    #move_matching_folders(yaml_path, source_folder, target_root)
+    move_matching_folders(yaml_path, source_folder, target_root)
 
     # 使用示例
     # 加载数据并执行文件复制

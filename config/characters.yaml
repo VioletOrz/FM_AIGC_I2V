@@ -43,8 +43,8 @@ character_name: [
   "Elysia",
   "Yae Miko",
   #"Diluc", ###
-  "Gan Yu",                #####*****
-  "Hu Tao",
+  "Ganyu",                #####*****
+  "Hutao",
   "Raiden Shogun",
   "Lisa",
   #"Nahida", ###
@@ -53,8 +53,8 @@ character_name: [
   "Sangonomiya Kokomi",
   #"Kamisato Ayaka", ###
   "Yoimiya",
-  "Ye Lan",                #####*****
-  "Bei Dou",
+  "Yelan",                #####*****
+  "Beidou",
   "Dan Heng",
   "Faruzan",
   "Kamisato Ayato",
@@ -71,8 +71,8 @@ character_name: [
   "Kamisato Ayaka",       #####*****
   "Venti",
   "Xiao",
-  "Xing Qiu",
-  "Zhong Li",
+  "Xingqiu",
+  "Zhongli",
   "Diluc",                #####*****
   "Nahida",
 ]
@@ -82,8 +82,8 @@ character_name_dict: {
   "Elysia": "爱莉希雅",
   "Yae Miko": "八重神子",
   #"Diluc": "迪卢克", ###
-  "Gan Yu": "甘雨",                #####*****
-  "Hu Tao": "胡桃",
+  "Ganyu": "甘雨",                #####*****
+  "Hutao": "胡桃",
   "Raiden Shogun": "雷电将军",
   "Lisa": "丽莎",
   #"Nahida": "纳西妲", ###
@@ -92,8 +92,8 @@ character_name_dict: {
   "Sangonomiya Kokomi": "珊瑚宫心海",
   #"Kamisato Ayaka": "神里绫华", ###
   "Yoimiya": "霄宫",
-  "Ye Lan": "夜兰",                #####*****
-  "Bei Dou": "北斗",
+  "Yelan": "夜兰",                #####*****
+  "Beidou": "北斗",
   "Dan Heng": "丹恒",
   "Faruzan": "珐露珊",
   "Kamisato Ayato": "神里绫人",
@@ -110,8 +110,8 @@ character_name_dict: {
   "Kamisato Ayaka": "神里绫华",       #####*****
   "Venti": "温迪",
   "Xiao": "魈",
-  "Xing Qiu": "行秋",
-  "Zhong Li": "钟离",
+  "Xingqiu": "行秋",
+  "Zhongli": "钟离",
   "Diluc": "迪卢克",                #####*****
   "Nahida": "纳西妲",
 }
