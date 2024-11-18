@@ -64,10 +64,12 @@ def copy_specified_folders_with_structure_deep(src_folder, target_folder, folder
 
 # 使用示例
 if __name__ == "__main__":
-    src_folder = r"E:\图包\005"
-    target_folder = r"E:\图包005_test"
-    folder_names = ["Difference_I","cropped_dir"]  # 可以指定多个文件夹名称
+    src_folder = r"E:\图包\006"
+    target_folder = r"E:\图包006_r"
+    folder_names = ["Difference_R","cropped_dir"]  # 可以指定多个文件夹名称
     retain_depth = 1 #保留父目录时跳过几级目录结构 例如 已知目录a/b/c/d，src_folder = a，folder_names = ['d']，如果 retain_depth = 0 那么保留的目录结构 b/c/d ，retain_depth = 1 那么保留的目录结构 c/d，依次类推
     copy_specified_folders_with_structure_deep(src_folder, target_folder, folder_names, retain_depth)
+
+
 
 

@@ -3,6 +3,8 @@ import yaml
 from datetime import datetime
 import os
 import time
+from tools.copy_select_img_pack import copy_specified_folders_with_structure
+import torch
 
 def Args():
     parser = argparse.ArgumentParser(description="A script to process config")
@@ -62,7 +64,7 @@ def Args():
         'emotion_pose_load_path': emotion_pose_load_path,
     }
 
-def argument(arg):
+def argument(arg = {}):
     config_path = arg['config']
     with open(config_path, 'r') as file:
         config = yaml.safe_load(file)
@@ -374,9 +376,9 @@ def Generate_image_package_pipeline_from_String(config, pipeline: str):
     sys_output = ''
     cnt  = 0
     for process_step in pipeline:
-        if process_step not in "PIDSRFpidsr":
+        if process_step not in "PIDSRFCpidsrc":
             print("###################################################################################################")
-            print(f"The pipeline char is must in P, I/i, D/d, S/s, R/r, F, the input pipeline char is: {process_step}.")
+            print(f"The pipeline char is must in P, I/i, D/d, S/s, R/r, F, C/c, the input pipeline char is: {process_step}.")
             print("###################################################################################################")
             return
         if process_step == 'p':
@@ -474,6 +476,27 @@ def Generate_image_package_pipeline_from_String(config, pipeline: str):
                 print("###################################################################################################")
                 return
             sys_output = sys_output + f'From last Interrupt Step {process_step} Continue --> '
+        elif process_step == 'C':
+            if cnt != len(pipeline) - 1:
+                print("###################################################################################################")
+                print(f"The pipeline is noncompliant, C must on bottom .")
+                print("###################################################################################################")
+                return
+            if 'P' not in pipeline:
+                print("###################################################################################################")
+                print(f"The pipeline is noncompliant, When c is used, P must be in the pipeline .")
+                print(f"If you wish to skip the 'P' Pipeline check, use c instead.")
+                print(f"When using, make sure that the P process that was last run is the one with the current input image.")
+                print("###################################################################################################")
+                return
+            sys_output = sys_output + 'Copy "cropdir" "background_output" and "mask_output" to output path --> '
+        elif process_step == 'c':
+            if cnt != len(pipeline) - 1:
+                print("###################################################################################################")
+                print(f"The pipeline is noncompliant, c must on bottom .")
+                print("###################################################################################################")
+                return
+            sys_output = sys_output + 'Copy #the latest#!!! "cropdir" "background_output" and "mask_output" to output path --> '
         cnt = cnt + 1
 
     print("###########################################")
@@ -491,6 +514,7 @@ def Generate_image_package_pipeline_from_String(config, pipeline: str):
             Preview(config)
         elif process_step == 'I':
             last_output_path = Gen_img_pack(config = config, output_flie = base_image_path)
+            torch.cuda.empty_cache()
         elif process_step == 'D':
             if last_output_path == None:
                 last_output_path = continue_path(config, pipeline[cnt-1])
@@ -499,6 +523,7 @@ def Generate_image_package_pipeline_from_String(config, pipeline: str):
             if last_output_path == None:
                 last_output_path = continue_path(config, pipeline[cnt-1])
             last_output_path = SupResHD(config = config, input_file = last_output_path, output_file = SuperResHD_image_path)
+            torch.cuda.empty_cache()
         elif process_step == 'R':
             if last_output_path == None:
                 last_output_path = continue_path(config, pipeline[cnt-1])
@@ -509,7 +534,20 @@ def Generate_image_package_pipeline_from_String(config, pipeline: str):
                 last_output_path = continue_path(config, pipeline[cnt-1])
                 last_process_step = pipeline[cnt-1].upper()
             Difference_image(config = config, input_file = last_output_path, output_file = img_pack_save_path + img_pack_file_name + '/Difference_' + last_process_step)
+        elif process_step == 'C' or process_step == 'c':
+            mask_output_dir_name = os.path.basename(os.path.normpath(config['Path']['mask_output_dir'] ))
+            background_output_video_path_name = os.path.basename(os.path.normpath(config['Path']['background_output_video_path'])) 
+            cropped_dir_name = os.path.basename(os.path.normpath(config['Path']['cropped_dir']))
+            folder_names = [str(mask_output_dir_name),str(background_output_video_path_name),str(cropped_dir_name)]  # 可以指定多个文件夹名称
+            src_folder = "./data/"
+            package_name = config['Path']['img_pack_file_name']
+            if is_trans == True:
+                target_folder = img_pack_save_path + f"{package_name}_trans"
+            else:
+                target_folder = img_pack_save_path + f"{package_name}"
+            copy_specified_folders_with_structure(src_folder, target_folder, folder_names)
         cnt = cnt + 1
+        #return
 
 def continue_path(config, process_step):
     img_pack_save_path = config['Path']['img_pack_save_path']

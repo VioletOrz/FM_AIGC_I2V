@@ -61,8 +61,10 @@ def resize_batch(input_file, output_file):
         else:
 
             for strength in transform_strength:
-                if  mode=='i' or mode=='o':
-                    strength=1.0
+                if  mode=='i' and strength == 0.5:
+                    continue
+                if mode=='o'and strength == 0.5:
+                    continue
                 print(f"###################################################开始合成{mode}表情的强度为{strength}###################################################")
                 if not os.path.exists(output_file+f'/{mode}_{strength}'):
                     os.makedirs(output_file+f'/{mode}_{strength}')

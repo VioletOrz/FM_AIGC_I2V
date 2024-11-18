@@ -15,15 +15,19 @@ import os
 import shutil
 import yaml
 
-def load_yaml_data(yaml_path):
+def load_yaml_data(yaml_path, is_pinyin):
     # 读取 YAML 文件，加载列表和字典
     with open(yaml_path, "r", encoding="utf-8") as file:
         data = yaml.safe_load(file)
-    return data.get("image_path", []), data.get("character_name_dict", {})
+    
+    if is_pinyin:
+        return data.get("image_path", []), data.get("character_name_dict_pinyin", {})
+    else:
+        return data.get("image_path", []), data.get("character_name_dict_English", {})
 
-def copy_files_to_directories(yaml_path, target_root):
+def copy_files_to_directories(yaml_path, target_root, is_pinyin):
     # 加载数据
-    image_path, character_name_dict = load_yaml_data(yaml_path)
+    image_path, character_name_dict = load_yaml_data(yaml_path, is_pinyin)
     
     # 在目标根目录下创建 ani-pic 文件夹
     ani_pic_folder = os.path.join(target_root, "ani-pic")
@@ -47,21 +51,15 @@ def copy_files_to_directories(yaml_path, target_root):
         shutil.copy2(file, ani_pic_target)
         print(f"文件 {file} 同时复制到 {ani_pic_folder}")
 
-def load_character_name_dict(yaml_path):
-    # 读取 YAML 文件，加载字典
-    with open(yaml_path, "r", encoding="utf-8") as file:
-        data = yaml.safe_load(file)
-    return data.get("character_name_dict", {})
-
 def print_character_name_dict(yaml_path):
-    character_name_dict = load_character_name_dict(yaml_path)
+    _, character_name_dict = load_yaml_data(yaml_path)
     for english_name, chinese_name in character_name_dict.items():
         print(f"{english_name}: {chinese_name}")
 
-def move_matching_folders(yaml_path, source_folder, target_root):
+def move_matching_folders(yaml_path, source_folder, target_root, is_pinyin):
     # 加载字典
-    character_name_dict = load_character_name_dict(yaml_path)
-    d = {"a":"啊"}
+    _, character_name_dict = load_yaml_data(yaml_path, is_pinyin)
+    #d = {"a":"啊"}
     # 遍历 source_folder 中的所有子文件夹
     for folder_name in os.listdir(source_folder):
         folder_path = os.path.join(source_folder, folder_name)

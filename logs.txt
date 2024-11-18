@@ -8,7 +8,8 @@
 透明背景控制 必须为 “True" 或者 ”False“的字符串，优先级高于yaml中设定的参数，如果输入其他值则会使用yaml中设定的参数 
 图包名称控制 启用并且接收到输入后优先级高于yaml中的设定的参数
 Pipeline控制使用说明
-P 生成预览视频 这个必须在第一步
+P 生成预览视频 这个必须在第一步或者位于p之后
+p 预处理emotion video的过程 p必须位于顶部
 I 生成基础图包 这个必须在第一步或者在 P 之后 
 i 占位符 代表已经执行过 I 生成了图包 不会执行 I 的代码 给后面的步骤提供输入 主要用于程序意外中断后 可以从 I 之后继续运行 必须在第一步
 D 去朦胧算法 这一步必须在I/i之后 
@@ -18,6 +19,8 @@ s 占位符 代表已经执行过 S 生成了图包 不会执行 S 的代码 给
 R 生成降采样一半分辨率的图包 这一步必须在 S/s 后
 r 占位符 代表已经执行过 S 生成了图包 不会执行 S 的代码 给后面的步骤提供输入 主要用于程序意外中断后 可以从 s 之后继续运行 必须在第一步
 F 生成差分图包 这一步必须在 I/i D/i S/s R/r 后 生成他们对应的差分图包，可以不是最后一步 如果插入在某两步中间 那么他的下一步会使用他上一步的输出路径作为输入路径
+C 用于复制"cropdir" "background_output" and "mask_output"这三个缓存文件夹到输出路径中 必须在最后一步 使用时Pipeline中必须有 P
+c 这个一个不安全版本的 C 用于复制最新的"cropdir" "background_output" and "mask_output"这三个缓存文件夹到输出路径中 必须在最后一部 但Pipeline中不必包含P 仅适用于Pipeline意外中断时
 
 加入输入路径 arg改成能接收unknow的 调用sd的步骤优化一下
 
@@ -116,4 +119,30 @@ v2.3.1
 更新了copy图包代码，现在在复制保存时可以跳过某些父目录结构
 工具代码tools中的代码补充了必要的说明
 我使用过的源图像（config/characters.yaml中有记录的）也会上传到github仓库单独的分支
+
+v2.3.2
+24.11.14
+加入了一个将角色图包英文命名改为拼音命名或者将拼音改为英文的工具tools\Eng_to_Ch_pinyin.py 这个工具会根据上级目录的中文名字对子文件夹进行重命名 前提是这个中文名字存在于config\characters.yaml中
+Auto队列以及config\characters.yaml中加入了以拼音命名代替英文的选项 和对应的yaml配置文件
+tools\characters_name_map.py暂未加入拼音命名功能
+加入了一个新的图包后处理工具包tools\Img_pack_process.py,用于处理tools\copy_select_img_pack.py处理后的图包 或者 Auto_queue.py生成的图包
+
+24.11.15
+Auto队列从调用进程池改为直接调用launch.py中的部分代码，这种做法更安全
+在tools\Eng_to_Ch_pinyin.py加入了一个不依赖上级中文目录进行拼音英文转换的算法
+纠正了log 24.11.15第一行的描述错误
+##########################################################################
+launch适用于生成单个图包 挂在服务器后台待机实时运行
+批量生成请使用Auto_queue
+pipeline中加入了新的控制符 
+C 用于复制"cropdir" "background_output" and "mask_output"这三个缓存文件夹到输出路径中 必须在最后一步 使用时Pipeline中必须有 P
+c 这个一个不安全版本的 C 用于复制最新的"cropdir" "background_output" and "mask_output"这三个缓存文件夹到输出路径中 必须在最后一部 但Pipeline中不必包含P 仅适用于Pipeline意外中断时
+同时更新了相关代码 Auto_queue中C对应的功能被删除，如需使用请在pipeline中添加，Auto_queue的打包到中文目录和复制源图像到中文目录的功能依然存在 这两个功能不会加入到launch.py的Pipeline中
+修复了一个历史遗留Bug 全局遍量引发auto_queue无法正确生成头像
+优化了resize代码的读取逻辑 避免了部分图包被resize两次的问题
+在超分和生成图包步骤后面加入了显存回收 降低了显存占用
+
+24.11.18
+加入了一个批量压缩指定文件夹下的子文件夹的脚本
+
 

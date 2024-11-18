@@ -1,8 +1,5 @@
 #这里面在原有的基础上增加了人脸识别以及裁剪的模块，人脸识别主函数可以看detect.py这一个文件
 
-
-
-
 from PIL import Image
 import os
 import numpy as np
@@ -25,9 +22,6 @@ from utils.datasets import LoadStreams, LoadImages
 from utils.general import (
     check_img_size, non_max_suppression, apply_classifier, scale_coords, xyxy2xywh, plot_one_box, strip_optimizer)
 from utils.torch_utils import select_device, load_classifier, time_synchronized
-
-
-
 
 z=0
 def change_position(img_path,cropped_dir=''):
@@ -159,6 +153,7 @@ def change_position(img_path,cropped_dir=''):
                 strip_optimizer(opt.weights)
         else:
             c1,c2,length=detect(cropped_dir=cropped_dir)
+  
   return c1,c2,length
 
 def remove_masked_area(img, mask):
@@ -260,6 +255,8 @@ def save_masks(img_path, output_dir,cropped_dir=''):
             mask_img.save(os.path.join(output_dir, mask_name))
             square_img.save(os.path.join(output_dir, img_name))
             #os.remove('output_dir/cropped_image.png')
+            global z          
+            z = 0
             return left,top,a,b,right-left,bottom-top#返回蒙版左上角坐标，以及拼到正方形后左上角坐标，以及蒙版的长和宽
 
 

@@ -1,117 +1,222 @@
+star_indx : 6
 
 image_path: [
+  #########################################################################################################
+  #########################################################################################################
+  #########################
+  #Ani-Pic-001
+  #########################
   "data/ani-pic/71.png",
   "data/ani-pic/112.png",
   "data/ani-pic/74.png",
-  #"data/ani-pic/77.png", ###
-  "data/ani-pic/83.png", #####*****
-  "data/ani-pic/87.png",
+  "data/ani-pic/83.png", 
+  "data/ani-pic/87.png",  
   "data/ani-pic/61.png",
   "data/ani-pic/94.png",
-  #"data/ani-pic/97.png", ###
-  "data/ani-pic/104.png", #####*****
+  "data/ani-pic/104.png", 
   "data/ani-pic/115.png",
-  "data/ani-pic/70.png",
-  #"data/ani-pic/66.png", ###
+  "data/ani-pic/70.png",  
   "data/ani-pic/118.png",
-  "data/ani-pic/120.png", #####*****
+  "data/ani-pic/120.png", 
   "data/ani-pic/127.png", 
   "data/ani-pic/121.png",
-  "data/ani-pic/129.png",
-  "data/ani-pic/128.png",
-  "data/ani-pic/125.png", #####*****
+  "data/ani-pic/129.png", 
+  "data/ani-pic/182.png", #128
+  "data/ani-pic/125.png", 
   "data/ani-pic/135.png",
   "data/ani-pic/148.png",
-  "data/ani-pic/146.png",
+  "data/ani-pic/146.png", 
   "data/ani-pic/171.png", 
-  "data/ani-pic/136.png", #####*****
+  "data/ani-pic/136.png", 
   "data/ani-pic/149.png",
   "data/ani-pic/132.png",
-  "data/ani-pic/158.png",
+  "data/ani-pic/158.png", 
   "data/ani-pic/141.png", 
-  "data/ani-pic/161.png", #####*****
+  "data/ani-pic/161.png", 
   "data/ani-pic/144.png",
   "data/ani-pic/169.png",
-  "data/ani-pic/154.png",
+  "data/ani-pic/154.png", 
   "data/ani-pic/165.png",
-  "data/ani-pic/172.png", #####*****
+  "data/ani-pic/172.png", 
   "data/ani-pic/173.png", 
+  "data/ani-pic/175.png", 
+  #########################################################################################################
+  #########################################################################################################
 ]
 
-character_name: [
+character_name_English: [
+  #########################################################################################################
+  #########################################################################################################
+  #########################
+  #Ani-Pic-001
+  #########################
   "Albedo",
   "Elysia",
   "Yae Miko",
-  #"Diluc", ###
-  "Ganyu",                #####*****
-  "Hutao",
+  "Ganyu",               
+  "Hutao",                
   "Raiden Shogun",
   "Lisa",
-  #"Nahida", ###
-  "Aventurine",           #####*****
+  "Aventurine",           
   "Sucrose",
-  "Sangonomiya Kokomi",
-  #"Kamisato Ayaka", ###
+  "Sangonomiya Kokomi",   
   "Yoimiya",
-  "Yelan",                #####*****
+  "Yelan",                
   "Beidou",
   "Dan Heng",
-  "Faruzan",
+  "Faruzan",             
   "Kamisato Ayato",
-  "Sayu",                 #####*****
+  "Sayu",                 
   "Amber",
   "Barbara",
-  "Bennett",
+  "Bennett",              
   "Tartaglia",
-  "Kaedehara Kazuha",     #####*****
+  "Kaedehara Kazuha",     
   "Arataki Itto",
   "Ning Guang",
-  "Noelle",
+  "Noelle",               
   "Paimon",
-  "Kamisato Ayaka",       #####*****
+  "Kamisato Ayaka",       
   "Venti",
   "Xiao",
-  "Xingqiu",
+  "Xingqiu",             
   "Zhongli",
-  "Diluc",                #####*****
+  "Diluc",                
   "Nahida",
+  "Chillet",
+  #########################################################################################################
+  #########################################################################################################
 ]
 
-character_name_dict: {
-  "Albedo": "阿贝多",
-  "Elysia": "爱莉希雅",
-  "Yae Miko": "八重神子",
-  #"Diluc": "迪卢克", ###
-  "Ganyu": "甘雨",                #####*****
-  "Hutao": "胡桃",
+
+character_name_dict_English: {
+  #########################################################################################################
+  #########################################################################################################
+  #########################
+  #Ani-Pic-001
+  #########################
+  "Albedo": "阿贝多", 
+  "Elysia": "爱莉希雅", 
+  "Yae Miko": "八重神子", 
+  "Ganyu": "甘雨",                
+  "Hutao": "胡桃",                      
   "Raiden Shogun": "雷电将军",
   "Lisa": "丽莎",
-  #"Nahida": "纳西妲", ###
-  "Aventurine": "砂金",           #####*****
+  "Aventurine": "砂金",           
   "Sucrose": "砂糖",
-  "Sangonomiya Kokomi": "珊瑚宫心海",
-  #"Kamisato Ayaka": "神里绫华", ###
+  "Sangonomiya Kokomi": "珊瑚宫心海",     
   "Yoimiya": "霄宫",
-  "Yelan": "夜兰",                #####*****
+  "Yelan": "夜兰",                      
   "Beidou": "北斗",
   "Dan Heng": "丹恒",
   "Faruzan": "珐露珊",
   "Kamisato Ayato": "神里绫人",
-  "Sayu": "早柚",                 #####*****
+  "Sayu": "早柚",                 
   "Amber": "安柏",
   "Barbara": "芭芭拉",
   "Bennett": "班尼特",
   "Tartaglia": "达达利亚",
-  "Kaedehara Kazuha": "枫原万叶",     #####*****
+  "Kaedehara Kazuha": "枫原万叶",     
   "Arataki Itto": "荒泷一斗",
   "Ning Guang": "凝光",
   "Noelle": "诺艾尔",
   "Paimon": "派蒙",
-  "Kamisato Ayaka": "神里绫华",       #####*****
+  "Kamisato Ayaka": "神里绫华",       
   "Venti": "温迪",
   "Xiao": "魈",
   "Xingqiu": "行秋",
   "Zhongli": "钟离",
-  "Diluc": "迪卢克",                #####*****
+  "Diluc": "迪卢克",                
   "Nahida": "纳西妲",
+  "Chillet": "疾旋鼬",
+  #########################################################################################################
+  #########################################################################################################
+}
+
+character_name_pinyin: [
+  #########################################################################################################
+  #########################################################################################################
+  #########################
+  #Ani-Pic-001
+  #########################
+  "abeiduo",
+  "ailixiya",
+  "bachongshenzi",
+  "ganyu",                
+  "hutao",
+  "leidianjiangjun",
+  "lisha",
+  "shajin",           
+  "shatang",
+  "shanhugongxinhai",
+  "xiaogong",
+  "yelan",                
+  "beidou",
+  "danheng",
+  "falushan",
+  "shenlilingren",
+  "zaoyou",                 
+  "anbo",
+  "babala",
+  "bannite",
+  "dadaliya",
+  "fengyuanwanye",     
+  "huanglongyidou",
+  "ningguang",
+  "nuoaier",
+  "paimeng",
+  "shenlilinghua",       
+  "wendi",
+  "xiao",
+  "xingqiu",
+  "zhongli",
+  "diluke",                
+  "naxida",
+  "jixuanyou",
+  #########################################################################################################
+  #########################################################################################################
+]
+
+character_name_dict_pinyin: {
+  #########################################################################################################
+  #########################################################################################################
+  #########################
+  #Ani-Pic-001
+  #########################
+  "abeiduo": "阿贝多",
+  "ailixiya": "爱莉希雅",
+  "bachongshenzi": "八重神子",
+  "ganyu": "甘雨",                
+  "hutao": "胡桃",
+  "leidianjiangjun": "雷电将军",
+  "lisha": "丽莎",
+  "shajin": "砂金",           
+  "shatang": "砂糖",
+  "shanhugongxinhai": "珊瑚宫心海",
+  "xiaogong": "霄宫",
+  "yelan": "夜兰",                
+  "beidou": "北斗",
+  "danheng": "丹恒",
+  "falushan": "珐露珊",
+  "shenlilingren": "神里绫人",
+  "zaoyou": "早柚",                 
+  "anbo": "安柏",
+  "babala": "芭芭拉",
+  "bannite": "班尼特",
+  "dadaliya": "达达利亚",
+  "fengyuanwanye": "枫原万叶",     
+  "huanglongyidou": "荒泷一斗",
+  "ningguang": "凝光",
+  "nuoaier": "诺艾尔",
+  "paimeng": "派蒙",
+  "shenlilinghua": "神里绫华",       
+  "wendi": "温迪",
+  "xiao": "魈",
+  "xingqiu": "行秋",
+  "zhongli": "钟离",
+  "diluke": "迪卢克",                
+  "naxida": "纳西妲",
+  "jixuanyou": "疾旋鼬",
+  #########################################################################################################
+  #########################################################################################################
 }
