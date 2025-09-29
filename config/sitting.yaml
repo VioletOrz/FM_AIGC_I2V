@@ -1,6 +1,6 @@
 # Configuration for image generation settings
 Path:
-  original_image_path: 'data/ani-pic/61.png' #This in input image
+  original_image_path: 'data/ani-pic/161.png' #This in input image
 
   emotion_video_path: 'data/emotion/' #The preview mp4 reference emotion video
   emotion_video: '2.mp4' #
@@ -22,7 +22,7 @@ Path:
 
 
   
-  img_pack_save_path: 'C:/Users/Violet/Desktop/facial/' #This is output path
+  img_pack_save_path: 'facial/' #This is output path
   img_pack_file_name: 'OOX' #This is output flie,usually,this is the id of the character
   base_pack_name: 'base_image_package' #
   dehazed_pack_name: "dehazed_image_package" #Dehazed images output file
