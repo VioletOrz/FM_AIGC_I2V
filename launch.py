@@ -13,6 +13,7 @@ def Args():
     parser.add_argument('--config', default="./config/sitting.yaml", type=str, required=False, help='Path to the config file.')
     parser.add_argument('--pipeline', type=str, default="PIFDFSFRF",required=False, help='Pipeline.')
     parser.add_argument('--is_trans', type=str, default=None, required=False, help='Generate transparent no background image package.')
+    parser.add_argument('--use_api', type=str, default=None, required=False, help='Use API to get mask.')
     parser.add_argument('--package_name', type=str, default=None, required=False, help='Output package name.')
     parser.add_argument('--input_path', type=str, default=None, required=False, help='Input image path.')
     parser.add_argument('--alternate_background', type=str, default=None, required=False, help='Generate image package with alternate background.')
@@ -29,6 +30,7 @@ def Args():
     config_file = args.config
     pipeline_string = args.pipeline
     mode_is_trans = args.is_trans
+    use_api = args.use_api
     package_name = args.package_name
     input_path = args.input_path
     alternate_background = args.alternate_background
@@ -36,12 +38,14 @@ def Args():
     emotion_from_tensor = args.emotion_from_tensor
     emotion_pose_save_path = args.emotion_pose_save_path
     emotion_pose_load_path = args.emotion_pose_load_path
+    
 
 
     print({
         "config": config_file,
         "pipeline": pipeline_string,
         "is_trans": mode_is_trans,
+        'use_api': use_api,
         'package_name': package_name,
         'input_path': input_path,
         'alternate_background': alternate_background,
@@ -55,6 +59,7 @@ def Args():
         "config": config_file,
         "pipeline": pipeline_string,
         "is_trans": mode_is_trans,
+        'use_api': use_api,
         'package_name': package_name,
         'input_path': input_path,
         'alternate_background': alternate_background,
@@ -98,6 +103,8 @@ def argument(arg = {}):
         DiffLD_pack_name = config['Path']['DiffLD_pack_name']
 
         is_trans = config['mode']['is_trans']
+        use_api = config['mode']['use_api']
+        api_key = config['mode']['api_key']
         alternate_background = config['mode']['alternate_background']
         emotion_from_tensor = config['mode']['emotion_from_tensor']
         #force_extension = config['mode']['force_extension']
@@ -109,6 +116,11 @@ def argument(arg = {}):
             is_trans = True
         elif arg['is_trans'] == "False":
             is_trans = False
+    if arg['use_api'] != None:
+        if arg['use_api'] == "True":
+            use_api = True
+        elif arg['use_api'] == "False":
+            use_api = False
     if arg['package_name'] != None:
         img_pack_file_name = arg['package_name']
     if arg['input_path'] != None:
@@ -157,6 +169,8 @@ def argument(arg = {}):
             },
         'mode':{
                 'is_trans': is_trans,
+                'use_api': use_api,
+                'api_key': api_key,
                 'alternate_background': alternate_background,
                 'emotion_from_tensor': emotion_from_tensor,
             },
@@ -176,6 +190,8 @@ def Preview(config):
 
     #######################
     is_trans = config['mode']['is_trans']
+    use_api = config['mode']['use_api']
+    api_key = config['mode']['api_key']
     alternate_background = config['mode']['alternate_background']
     emotion_from_tensor = config['mode']['emotion_from_tensor']
     #######################
@@ -197,7 +213,7 @@ def Preview(config):
 
     units_ins=units()
     
-    units_ins.step1(original_image_path,mask_output_dir,cropped_dir)
+    units_ins.step1(original_image_path,mask_output_dir,cropped_dir,use_api,api_key)
     print("----------------------------step1 finished!!-------------------------------------")
 
     if is_trans == False:
@@ -225,6 +241,8 @@ def Gen_img_pack(config, output_flie):
 
     #######################
     is_trans = config['mode']['is_trans']
+    use_api = config['mode']['use_api']
+    api_key = config['mode']['api_key']
     alternate_background = config['mode']['alternate_background']
     emotion_from_tensor = config['mode']['emotion_from_tensor']
     #######################
@@ -249,7 +267,7 @@ def Gen_img_pack(config, output_flie):
 
     units_ins2=units2()
 
-    units_ins2.step1(original_image_path,mask_output_dir,cropped_dir)
+    units_ins2.step1(original_image_path,mask_output_dir,cropped_dir,use_api,api_key)
     print("----------------------------step1 finished!!-------------------------------------")
 
     if is_trans == False:

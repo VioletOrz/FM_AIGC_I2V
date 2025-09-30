@@ -434,12 +434,12 @@ class units2():
         fps = video.get(cv2.CAP_PROP_FPS)
         video.release()
         return fps  
-    def step1(self,original_image_path,mask_output_dir,cropped_dir):
+    def step1(self,original_image_path,mask_output_dir,cropped_dir,use_api,api_key):
         cropped_path=crop_image(original_image_path, cropped_dir)
         print(cropped_path)
         time.sleep(3)
         #self.left,self.top,self.left_in_square,self.top_in_square,self.mask_width,self.mask_height=save_masks(cropped_path,mask_output_dir,cropped_dir)
-        self.left,self.top,self.left_in_square,self.top_in_square,self.mask_width,self.mask_height=save_masks(original_image_path,mask_output_dir,cropped_dir)
+        self.left,self.top,self.left_in_square,self.top_in_square,self.mask_width,self.mask_height=save_masks(original_image_path,mask_output_dir,cropped_dir,use_api,api_key)
     def step2(self,original_image_path,mask_output_path,background_path,is_trans = False, alternate_background = False):
         #将遮罩图片和原始图片输入sd，重绘得到背景图片
         import requests

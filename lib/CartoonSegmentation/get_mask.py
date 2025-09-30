@@ -23,7 +23,11 @@ from utils.general import (
     check_img_size, non_max_suppression, apply_classifier, scale_coords, xyxy2xywh, plot_one_box, strip_optimizer)
 from utils.torch_utils import select_device, load_classifier, time_synchronized
 
+from rmbg import remove_background, get_mask_and_bbox
+
 z=0
+
+API_KEY = "e9ff7d61ffa318d0c6eb59498c4a6dd36b143898"
 def change_position(img_path,cropped_dir=''):
   
   def detect(save_img=False, cropped_dir = ''):
@@ -185,7 +189,7 @@ def remove_masked_areafan(img, mask):
     return result_img
 
 
-def save_masks(img_path, output_dir,cropped_dir=''):
+def save_masks(img_path, output_dir, cropped_dir='', use_api=False, API_KEY=None):
     # 初始化检测器
     current_working_dir = os.getcwd()
     detector = AnimeInsSeg(current_working_dir+"/lib/CartoonSegmentation/models/AnimeInstanceSegmentation/rtmdetl_e60.ckpt",device='cuda')
@@ -195,8 +199,16 @@ def save_masks(img_path, output_dir,cropped_dir=''):
     img = Image.open(img_path).convert('RGBA')
 
     # 使用检测器获取实例
-    instances = detector.infer(img_path, output_type='numpy', infer_tags=False)
+    instances = detector.infer(img_path, output_type='numpy', infer_tags=False, pred_score_thr=0.1)
 
+    # use_api = True
+    # API_KEY = 'e9ff7d61ffa318d0c6eb59498c4a6dd36b143898'
+
+    if use_api:
+        remove_background(image_path=img_path, api_key=API_KEY, output_path=cropped_dir + "photoroom-result.png")
+        mask, bdbox = get_mask_and_bbox(cropped_dir + "photoroom-result.png")
+
+        # instances.masks = [mask.astype(bool)]  # 将 mask 转换为布尔类型并存储在列表中
     # 如果实例不为空
     if not instances.is_empty:
         # 遍历实例的掩码
@@ -204,7 +216,11 @@ def save_masks(img_path, output_dir,cropped_dir=''):
             print(mask)
             print(mask.shape)
             # 将掩码调整为图像的大小，并将其转换为 Image 对象
-            mask_img = Image.fromarray((mask * 255).astype(np.uint8))
+            # mask_img = Image.fromarray((mask * 255).astype(np.uint8))
+            if use_api:
+                mask_img = Image.fromarray(mask.astype(np.uint8))
+            else:
+                mask_img = Image.fromarray((mask * 255).astype(np.uint8))
 
             # 创建一个新的透明图像
             transparent_img = Image.new('RGBA', img.size)

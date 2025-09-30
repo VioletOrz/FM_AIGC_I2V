@@ -22,7 +22,7 @@ Path:
 
 
   
-  img_pack_save_path: 'facial/' #This is output path
+  img_pack_save_path: './facial/' #This is output path
   img_pack_file_name: 'OOX' #This is output flie,usually,this is the id of the character
   base_pack_name: 'base_image_package' #
   dehazed_pack_name: "dehazed_image_package" #Dehazed images output file
@@ -36,6 +36,8 @@ mode:
   is_trans: True #This parameter controls whether the generated image has a transparent background (only characters, no background)
   alternate_background: False #Opening will use the image uploaded by the user instead of the original background,
   emotion_from_tensor: False #Read the processed pose data set from a.pt file instead of a.mp4 video
+  use_api: False #Whether to use the remove.bg API to remove the background
+  api_key: 'e9ff7d61ffa318d0c6eb59498c4a6dd36b143898' #Your remove.bg API key
   #force_extension: 'webp' # None 'jpg' 'png' 'webp' It must be a string or None #This parameter controls the format in which the image is saved. Setting it to None automatically selects the format
 
 model_path:

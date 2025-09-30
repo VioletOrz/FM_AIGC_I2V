@@ -1,0 +1,9 @@
+.history
+lib/CartoonSegmentation/models/AnimeInstanceSegmentation/*
+lib/CartoonSegmentation/models/wd-v1-4-swinv2-tagger-v2/*
+lib/CartoonSegmentation/yolov5x_anime.pt
+lib/talking/data/models/*
+__pycache*
+FM_AIGC_I2V-Animation-Handler
+.vscode
+facial
