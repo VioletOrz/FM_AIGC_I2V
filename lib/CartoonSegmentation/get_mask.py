@@ -206,7 +206,7 @@ def save_masks(img_path, output_dir, cropped_dir='', use_api=False, API_KEY=None
 
     if use_api:
         remove_background(image_path=img_path, api_key=API_KEY, output_path=cropped_dir + "photoroom-result.png")
-        mask, bdbox = get_mask_and_bbox(cropped_dir + "photoroom-result.png")
+        mask_api, bdbox = get_mask_and_bbox(cropped_dir + "photoroom-result.png")
 
         # instances.masks = [mask.astype(bool)]  # 将 mask 转换为布尔类型并存储在列表中
     # 如果实例不为空
@@ -218,7 +218,7 @@ def save_masks(img_path, output_dir, cropped_dir='', use_api=False, API_KEY=None
             # 将掩码调整为图像的大小，并将其转换为 Image 对象
             # mask_img = Image.fromarray((mask * 255).astype(np.uint8))
             if use_api:
-                mask_img = Image.fromarray(mask.astype(np.uint8))
+                mask_img = Image.fromarray(mask_api.astype(np.uint8))
             else:
                 mask_img = Image.fromarray((mask * 255).astype(np.uint8))
 
